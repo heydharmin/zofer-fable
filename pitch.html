@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Chauffeur, Not A Chauffeur — PD Pitch</title>
+<style>
+  :root{
+    --bg:#F5F6F9; --card:#fff; --ink:#12151A; --ink2:#39414E; --muted:#69707E; --faint:#98A0AD;
+    --line:#E0E4EB; --line2:#EDEFF4;
+    --blue:#2456E0; --blue-soft:#E9EFFF; --teal:#0E9C9C; --indigo:#5B62E8;
+    --orange:#FF6A00; --orange-soft:#FFF1E7; --good:#1EA34B; --good-soft:#E9F6EE;
+    --slate:#5A6478; --slate-soft:#EEF0F3; --gold:#B7791F; --gold-soft:#FBF3E2;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.55}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+  h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.02em;line-height:1.1;text-wrap:balance}
+  p{margin:0}
+  .mono{font-family:var(--mono)}
+  .ey{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;display:inline-flex;align-items:center;gap:9px}
+  .ey::before{content:"";width:20px;height:1.5px;background:currentColor}
+
+  /* HERO */
+  header{background:var(--ink);color:#EAEDF3;padding:52px 0 46px;position:relative;overflow:hidden}
+  header::after{content:"";position:absolute;right:-10%;top:-40%;width:520px;height:520px;background:radial-gradient(closest-side,rgba(255,106,0,.22),transparent);pointer-events:none}
+  header .ey{color:#8AA6FF}
+  header h1{color:#fff;font-size:clamp(32px,5.4vw,56px);margin-top:16px;letter-spacing:-.035em}
+  header h1 em{font-style:normal;color:var(--orange)}
+  header .nar{max-width:64ch;color:#B7BFCD;font-size:16px;margin-top:18px}
+  header .nar b{color:#fff}
+  .stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .stat{font-family:var(--mono);font-size:12px;border:1px solid #2A303C;background:#181C24;border-radius:999px;padding:7px 13px;color:#C7CEDA}
+  .stat b{color:#fff}
+
+  section{padding:58px 0}
+  .shead{max-width:660px;margin-bottom:34px}
+  .shead h2{font-size:clamp(23px,3.1vw,32px);margin-top:13px}
+  .shead .ey{color:var(--blue)}
+  .shead p{color:var(--ink2);margin-top:12px;font-size:15px}
+
+  /* MATRIX */
+  .matrix{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:720px){.matrix{grid-template-columns:1fr}}
+  .mcol{border-radius:16px;padding:22px;border:1px solid var(--line);background:var(--card)}
+  .mcol.a{border-top:4px solid var(--slate)}
+  .mcol.b{border-top:4px solid var(--orange);box-shadow:0 20px 44px -30px rgba(255,106,0,.5)}
+  .mcol .mk{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:700}
+  .mcol.a .mk{color:var(--slate)} .mcol.b .mk{color:var(--orange)}
+  .mcol h3{font-size:19px;margin:9px 0 4px}
+  .mcol .sub{font-size:13px;color:var(--muted)}
+  .mcol ul{margin:14px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+  .mcol li{font-size:13.5px;color:var(--ink2);display:flex;gap:9px}
+  .mcol.a li::before{content:"⚡";flex:none}
+  .mcol.b li::before{content:"🤝";flex:none}
+  .evi{margin-top:16px;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 10px 10px 0;padding:11px 14px;font-size:12.5px;color:var(--ink2)}
+  .evi b{color:var(--blue)}
+
+  /* FLOW spine */
+  .spine{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-family:var(--mono);font-size:11.5px;margin-bottom:34px}
+  .sp{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-weight:600;color:var(--ink2)}
+  .sp.hot{background:var(--orange);border-color:var(--orange);color:#fff}
+  .sp.hot2{background:var(--ink);border-color:var(--ink);color:#fff}
+  .spa{color:var(--faint)}
+
+  /* phones row */
+  .phones{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+  .pcol{display:flex;flex-direction:column;align-items:center;gap:11px}
+  .plab{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;font-weight:700;color:var(--blue);display:flex;gap:7px;align-items:center}
+  .plab .st{background:var(--blue);color:#fff;border-radius:5px;padding:2px 7px}
+  .plab.o{color:var(--orange)} .plab.o .st{background:var(--orange)}
+  .phone{width:288px;background:#fff;border-radius:34px;padding:10px;box-shadow:0 28px 60px -32px rgba(20,30,60,.45);border:1px solid #D6DAE2}
+  .scr{background:#fff;border-radius:25px;overflow:hidden;position:relative;font-size:12px}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:74px;height:18px;background:var(--ink);border-radius:0 0 12px 12px;z-index:3}
+  .sb{display:flex;justify-content:space-between;padding:10px 17px 3px;font-size:11px;font-weight:600}
+  .bd{padding:8px 12px 12px}
+  .hd{font-size:15px;font-weight:800;letter-spacing:-.01em;margin:6px 1px 9px}
+  .hd small{display:block;font-size:10.5px;color:var(--muted);font-weight:500;margin-top:2px}
+
+  .opt{border:1.5px solid var(--line);border-radius:13px;padding:11px;margin-bottom:9px;position:relative}
+  .opt.on{border-color:var(--ink);background:#FAFAFB}
+  .opt .r{position:absolute;right:11px;top:11px;width:15px;height:15px;border-radius:50%;border:1.5px solid var(--faint)}
+  .opt.on .r{border-color:var(--ink);background:radial-gradient(circle at center,var(--ink) 0 44%,transparent 48%)}
+  .opt b{font-size:12.5px;display:block}
+  .opt .d{font-size:10.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+  .opt .pr{font-size:11px;font-weight:700;color:var(--blue);margin-top:4px}
+  .faces{display:flex;margin-top:6px}
+  .fa{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#3A4152,#20242E);border:2px solid #fff;margin-right:-7px;display:grid;place-items:center;font-size:11px}
+  .cta{background:var(--orange);color:#fff;border-radius:11px;text-align:center;padding:11px;font-size:12.5px;font-weight:700;margin-top:5px}
+  .cta.dark{background:var(--ink)}
+
+  .shield{display:flex;gap:7px;align-items:center;background:var(--good-soft);border:1px solid #CDEBD6;border-radius:10px;padding:8px 10px;font-size:10px;color:#177A38;font-weight:600;margin-bottom:10px}
+  .secl{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin:10px 1px 7px}
+  .dcard{border:1.5px solid var(--line);border-radius:13px;padding:10px;margin-bottom:8px;display:flex;gap:10px}
+  .dcard.reg{border-color:var(--gold);background:var(--gold-soft)}
+  .av{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#3A4152,#1D2330);flex:none;display:grid;place-items:center;font-size:19px;position:relative}
+  .av .ok{position:absolute;right:-4px;bottom:-4px;width:15px;height:15px;border-radius:50%;background:var(--good);color:#fff;font-size:9px;display:grid;place-items:center;border:2px solid #fff}
+  .dcard .in{flex:1;min-width:0}
+  .dcard .nm{font-size:12.5px;font-weight:800;display:flex;gap:6px;align-items:center}
+  .rtag{font-size:8.5px;font-weight:700;background:var(--gold);color:#fff;border-radius:5px;padding:1.5px 5px;letter-spacing:.03em}
+  .dcard .pf{font-size:10px;color:var(--ink2);margin-top:2px;line-height:1.4}
+  .dcard .pf b{color:var(--ink)}
+  .badges{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+  .bdg{font-size:8.5px;font-weight:700;background:var(--slate-soft);color:var(--slate);border-radius:4px;padding:2px 5px}
+  .bdg.g{background:var(--good-soft);color:var(--good)}
+  .dcard .side{text-align:right;flex:none}
+  .dcard .side .pp{font-size:11px;font-weight:800;color:var(--blue)}
+  .dcard .side .et{font-size:9.5px;color:var(--muted);margin-top:2px}
+  .chips{display:flex;gap:5px;overflow:hidden;margin:2px 0 9px}
+  .chip{flex:none;font-size:9.5px;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:var(--ink2)}
+  .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  .stars{color:#F5A623;font-size:16px;letter-spacing:2px;text-align:center;margin:6px 0 2px}
+  .center{text-align:center}
+  .tipr{display:flex;gap:6px;justify-content:center;margin:8px 0 10px}
+  .tip{border:1px solid var(--line);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700}
+  .hero-cta{background:linear-gradient(120deg,var(--orange),#FF8A3D);color:#fff;border-radius:13px;padding:12px;text-align:center;margin-bottom:8px}
+  .hero-cta b{font-size:13px;display:block}
+  .hero-cta span{font-size:10px;opacity:.9;display:block;margin-top:2px}
+  .ghost{border:1px solid var(--line);border-radius:11px;text-align:center;padding:9px;font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:7px}
+
+  .note-under{max-width:270px;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.5}
+  .note-under b{color:var(--ink)}
+
+  /* FUNNEL */
+  .funnel{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .fstep{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 18px;text-align:center;min-width:130px}
+  .fstep .fi{font-size:20px}
+  .fstep b{display:block;font-size:13px;margin-top:5px}
+  .fstep span{font-size:11px;color:var(--muted)}
+  .farr{font-family:var(--mono);color:var(--faint);font-size:15px}
+  .fstep.last{background:var(--ink);border-color:var(--ink);color:#fff}
+  .fstep.last span{color:#AEB6C6}
+  .ns{margin:26px auto 0;max-width:620px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:12px;padding:16px 20px}
+  .ns .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);font-weight:700}
+  .ns b{display:block;font-size:16px;margin-top:5px}
+  .ns p{font-size:12.5px;color:var(--muted);margin-top:5px}
+
+  /* LAWS */
+  .laws{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:900px){.laws{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.laws{grid-template-columns:1fr}}
+  .law{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px}
+  .law .ln{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--blue);letter-spacing:.05em;text-transform:uppercase}
+  .law p{font-size:12.5px;color:var(--ink2);margin-top:8px;line-height:1.5}
+  .law p b{color:var(--ink)}
+
+  /* TALKING POINTS */
+  .talks{display:flex;flex-direction:column;gap:10px;max-width:820px}
+  .talk{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px 18px;display:flex;gap:14px}
+  .talk .n{font-family:var(--mono);font-weight:800;color:var(--orange);font-size:13px;flex:none;padding-top:1px}
+  .talk .q{font-size:13.5px;color:var(--ink2);line-height:1.55}
+  .talk .q b{color:var(--ink)}
+  .talk .q .lw{font-family:var(--mono);font-size:10px;background:var(--blue-soft);color:var(--blue);border-radius:5px;padding:2px 6px;font-weight:700;letter-spacing:.03em}
+
+  /* SERVICES */
+  .svcs{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+  @media(max-width:920px){.svcs{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.svcs{grid-template-columns:1fr}}
+  .svc{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px;position:relative;overflow:hidden}
+  .svc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pc)}
+  .svc .em{font-size:20px}
+  .svc b{display:block;font-size:13px;margin-top:7px;letter-spacing:-.01em}
+  .svc p{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.45}
+  .svc .pr{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#fff;background:var(--pc);border-radius:5px;padding:2px 7px;display:inline-block;margin-top:9px}
+
+  footer{border-top:1px solid var(--line);padding:30px 0 56px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--faint)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="ey">Product-designer pitch · booking flow sprint</span>
+    <h1>Your chauffeur.<br>Not <em>a</em> chauffeur.</h1>
+    <p class="nar"><b>Careem assigns you a stranger. We introduce you to YOUR chauffeur</b> — a named, rated, rebookable person who knows your car, your school run, and your airport routine. Every service in the super-app becomes a relationship, not a transaction.</p>
+    <div class="stats">
+      <span class="stat"><b>8</b> design lenses</span>
+      <span class="stat"><b>40</b> ideas → <b>12</b> shipped</span>
+      <span class="stat">benchmarked: JustLife · Urban Co. · Uber Reserve · Careem</span>
+      <span class="stat"><b>12</b> UX laws applied</span>
+    </div>
+  </div>
+</header>
+
+<!-- MATRIX -->
+<section class="wrap">
+  <div class="shead">
+    <span class="ey">The centerpiece decision</span>
+    <h2>Urgency decides — not preference</h2>
+    <p>The skeptic is right: browsing drivers kills ETA. So the booking <b>mode</b> gates the choice. This matrix is the slide that shows a founder you think in trade-offs.</p>
+  </div>
+  <div class="matrix">
+    <div class="mcol a">
+      <span class="mk">⚡ Drive me NOW</span>
+      <h3>Auto-match. No list.</h3>
+      <p class="sub">"Fastest chauffeur to your door — 18 min." No choice to regret.</p>
+      <ul>
+        <li>Protects ETA &amp; supply liquidity</li>
+        <li>But humanized: photo, ID, "214 trips in owners' cars" the moment he's assigned</li>
+        <li>First-timers never face 12 strangers they can't judge</li>
+      </ul>
+    </div>
+    <div class="mcol b">
+      <span class="mk">🗓 Scheduled · Subscription</span>
+      <h3>Choose your chauffeur.</h3>
+      <p class="sub">Lead time kills the ETA penalty — choice becomes free.</p>
+      <ul>
+        <li>Full roster + "My regulars" shelf pinned on top</li>
+        <li>Transparent delta: "+AED 5 to book Ahmed" — waived for regulars</li>
+        <li>School runs, airport, night out — the high-trust, recurring trips</li>
+      </ul>
+    </div>
+  </div>
+  <div class="evi"><b>Rebuttal ammo:</b> Uber allows a Favorite Driver <u>only</u> inside Uber Reserve (scheduled, 2020) — never on-demand UberX. Lyft reached the same conclusion independently. The assign-a-stranger giants already conceded: choice belongs in the scheduled tier.</div>
+</section>
+
+<!-- FLOW -->
+<section style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="shead">
+      <span class="ey">The flow</span>
+      <h2>Eight steps — three moments that matter</h2>
+      <p>Price visible at every step. One decision per screen. The three screens below are where the strategy lives.</p>
+    </div>
+
+    <div class="spine">
+      <span class="sp">1 Home</span><span class="spa">→</span>
+      <span class="sp">2 Service</span><span class="spa">→</span>
+      <span class="sp">3 When &amp; Where</span><span class="spa">→</span>
+      <span class="sp hot">4 Match Fork ★</span><span class="spa">→</span>
+      <span class="sp hot">5 Choose Chauffeur</span><span class="spa">→</span>
+      <span class="sp">6 Review &amp; Pay</span><span class="spa">→</span>
+      <span class="sp">7 Live Handoff · PIN</span><span class="spa">→</span>
+      <span class="sp hot2">8 Rate &amp; Rebook ♥</span>
+    </div>
+
+    <div class="phones">
+
+      <!-- STEP 4 -->
+      <div class="pcol">
+        <span class="plab"><span class="st">STEP 4</span> The fork — default does the work</span>
+        <div class="phone"><div class="scr">
+          <div class="notch"></div>
+          <div class="sb"><span>9:41</span><span>5G ▮▮</span></div>
+          <div class="bd">
+            <div class="hd">Who drives your Prado?<small>Tomorrow 7:00 AM · Home → GEMS School</small></div>
+            <div class="opt on">
+              <span class="r"></span>
+              <b>Auto-match · fastest</b>
+              <div class="d">Verified chauffeur, ~9 min. Photo + ID shown the moment he's assigned.</div>
+              <div class="pr">AED 49</div>
+            </div>
+            <div class="opt">
+              <span class="r"></span>
+              <b>Choose your chauffeur</b>
+              <div class="d">Ahmed drove you last week · 12 available</div>
+              <div class="faces"><span class="fa">🧔</span><span class="fa">🧔🏽</span><span class="fa">👨🏽</span></div>
+              <div class="pr">+AED 5 · waived for regulars</div>
+            </div>
+            <div class="cta dark">Continue</div>
+          </div>
+        </div></div>
+        <p class="note-under"><b>Auto-match preselected</b> — the default protects speed &amp; supply. Scheduled bookings flip the emphasis.</p>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="pcol">
+        <span class="plab o"><span class="st">STEP 5</span> Choose — the JustLife moment</span>
+        <div class="phone"><div class="scr">
+          <div class="notch"></div>
+          <div class="sb"><span>9:41</span><span>5G ▮▮</span></div>
+          <div class="bd">
+            <div class="hd">Choose your chauffeur<small>Tue 7:00 AM · all insured &amp; ID-verified 🛡</small></div>
+            <div class="chips"><span class="chip on">My regulars</span><span class="chip">Fastest</span><span class="chip">Top rated</span><span class="chip">العربية</span><span class="chip">Female</span><span class="chip">Kids-trained</span></div>
+            <div class="dcard reg">
+              <span class="av">🧔<span class="ok">✓</span></span>
+              <div class="in">
+                <div class="nm">Rashid K. <span class="rtag">YOUR REGULAR</span></div>
+                <div class="pf"><b>7 trips with you</b> · knows your Prado<br>34 school runs · rebooked by 18 families</div>
+                <div class="badges"><span class="bdg g">EID ✓</span><span class="bdg g">Police ✓</span><span class="bdg g">RTA ✓</span><span class="bdg">EN · عربي · हिंदी</span></div>
+              </div>
+              <div class="side"><div class="pp">AED 49</div><div class="et">free 7 AM</div></div>
+            </div>
+            <div class="dcard">
+              <span class="av">👨🏽<span class="ok">✓</span></span>
+              <div class="in">
+                <div class="nm">Ahmed S. · 4.93★</div>
+                <div class="pf">412 trips · <b>great with kids ×11</b><br>12 airport trips this month</div>
+                <div class="badges"><span class="bdg g">EID ✓</span><span class="bdg g">Police ✓</span><span class="bdg">EN · اردو</span></div>
+              </div>
+              <div class="side"><div class="pp">+AED 5</div><div class="et">free 7 AM</div></div>
+            </div>
+            <div class="cta">Book Rashid — AED 49</div>
+          </div>
+        </div></div>
+        <p class="note-under"><b>Behavioral proof beats stars:</b> "rebooked by 18 families" discriminates when every driver is 4.9★.</p>
+      </div>
+
+      <!-- STEP 8 -->
+      <div class="pcol">
+        <span class="plab o"><span class="st">STEP 8</span> Rate &amp; rebook — the retention engine</span>
+        <div class="phone"><div class="scr">
+          <div class="notch"></div>
+          <div class="sb"><span>7:58</span><span>5G ▮▮</span></div>
+          <div class="bd center">
+            <div style="font-size:34px;margin-top:8px">🧔</div>
+            <div class="hd" style="text-align:center">How was Rashid?<small>Prado returned · keys with you ✓</small></div>
+            <div class="stars">★ ★ ★ ★ ★</div>
+            <div class="tipr"><span class="tip">10</span><span class="tip">20</span><span class="tip">50</span></div>
+            <div class="hero-cta"><b>⭐ Make Rashid your regular</b><span>he gets your bookings first — 90s priority window</span></div>
+            <div class="ghost">Book again · same time next week</div>
+            <div class="ghost">School run weekly · save AED 210/mo</div>
+          </div>
+        </div></div>
+        <p class="note-under"><b>The relationship is earned post-ride, not browsed pre-ride.</b> This tap — not the picker — creates most regulars.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FUNNEL + NORTH STAR -->
+<section class="wrap">
+  <div class="shead">
+    <span class="ey">The business story</span>
+    <h2>The trust flywheel</h2>
+  </div>
+  <div class="funnel">
+    <div class="fstep"><div class="fi">🚗</div><b>One-off</b><span>auto-matched</span></div>
+    <span class="farr">→</span>
+    <div class="fstep"><div class="fi">♥</div><b>Favorite</b><span>post-trip tap</span></div>
+    <span class="farr">→</span>
+    <div class="fstep"><div class="fi">🧔</div><b>Regular</b><span>rebook Rashid</span></div>
+    <span class="farr">→</span>
+    <div class="fstep last"><div class="fi">🔁</div><b>Subscription</b><span>"lock his 7 AM slot"</span></div>
+  </div>
+  <div class="ns">
+    <span class="k">North-star metric</span>
+    <b>Repeat-driver rebooking rate</b>
+    <p>% of bookings made with a previously-used chauffeur — the leading indicator of trust &amp; retention. Guardrails: booking completion &amp; time-to-assignment must not regress. Notice the metric doubles as the social proof on the driver card.</p>
+  </div>
+</section>
+
+<!-- UX LAWS -->
+<section style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="shead">
+      <span class="ey">Interview ammo</span>
+      <h2>Every decision has a law behind it</h2>
+    </div>
+    <div class="laws">
+      <div class="law"><span class="ln">Hick's Law</span><p>The fork is <b>one binary choice</b>, not a 30-card browse. ASAP users see no list at all.</p></div>
+      <div class="law"><span class="ln">Default Effect</span><p><b>Auto-match preselected</b> — then the default itself flips: returning users see "Your regular: Rashid — book again" first.</p></div>
+      <div class="law"><span class="ln">Paradox of Choice</span><p>Never a raw marketplace: <b>regulars shelf + filter chips</b> (language, female driver, kids-trained), one card per row.</p></div>
+      <div class="law"><span class="ln">Social Proof — Cialdini</span><p>Stars are inflated; <b>rebook counts are behavioral proof.</b> "Rebooked by 18 families · 34 school runs."</p></div>
+      <div class="law"><span class="ln">Halo Effect</span><p>Real face-forward photos in one studio style. <b>"Ahmed will drive your car"</b> — the face is where key-handover anxiety resolves.</p></div>
+      <div class="law"><span class="ln">Peak-End Rule</span><p>The relationship CTA lands at the <b>trip's end</b> — the exact moment the driver just proved himself.</p></div>
+      <div class="law"><span class="ln">Goal-Gradient</span><p>"2 of 3 trips to Trusted status" — a visible open loop that <b>pulls the next booking</b> forward.</p></div>
+      <div class="law"><span class="ln">Von Restorff</span><p>"Your regular" gets a <b>gold, visually isolated card</b> pinned first — the one that differs is the one chosen.</p></div>
+      <div class="law"><span class="ln">Jakob's Law</span><p>Heart-to-favorite under the stars, "Your chauffeurs" row — <b>JustLife/Urban Co. mechanics UAE users already know.</b></p></div>
+      <div class="law"><span class="ln">Tesler's Law</span><p>Booking complexity moves into the system: saved car, Home/School chips, <b>"Tomorrow 7:30 — your usual."</b></p></div>
+      <div class="law"><span class="ln">Information Scent</span><p>AED price appears <b>3 times, surprises 0 times</b> — tile, fork, confirm. Every priceless step is a leak.</p></div>
+      <div class="law"><span class="ln">Fitts's Law</span><p>Full-width confirm CTA in the <b>thumb zone — mirrored for Arabic RTL</b>, half this market reads right-to-left.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TALKING POINTS -->
+<section class="wrap">
+  <div class="shead">
+    <span class="ey">Say it out loud</span>
+    <h2>Five lines that win the room</h2>
+  </div>
+  <div class="talks">
+    <div class="talk"><span class="n">01</span><p class="q">"I never make the user choose between speed and choice — <b>the booking mode chooses for them.</b> Careem optimizes the next 10 minutes; we optimize the next 10 months." <span class="lw">choice architecture</span></p></div>
+    <div class="talk"><span class="n">02</span><p class="q">"One decision per screen. The driver card carries exactly what the key-handover decision needs; everything else lives a tap deeper. <b>Depth on demand, never up front.</b>" <span class="lw">progressive disclosure</span></p></div>
+    <div class="talk"><span class="n">03</span><p class="q">"Stars tell you he can drive; <b>rebook counts tell you people trust him twice.</b> Our north-star metric doubles as the social proof on the card." <span class="lw">behavioral proof</span></p></div>
+    <div class="talk"><span class="n">04</span><p class="q">"The fare appears three times and surprises zero times. Choosing a driver prices the <b>delta</b> explicitly — transparent deltas convert; hidden markups kill the trust this product sells." <span class="lw">information scent</span></p></div>
+    <div class="talk"><span class="n">05</span><p class="q">"Recurring plans <b>never silently substitute</b> — 12 hours' notice, the backup's full profile, accept/reschedule/credit. For someone's car and kids, an unannounced stranger isn't friction; it's churn." <span class="lw">failure-mode design</span></p></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section style="background:#fff;border-top:1px solid var(--line)">
+  <div class="wrap">
+    <div class="shead">
+      <span class="ey">Deepen the moat</span>
+      <h2>Services that make leaving expensive</h2>
+      <p>Each one compounds the relationship — the app becomes the car's memory and the family's routine.</p>
+    </div>
+    <div class="svcs">
+      <div class="svc" style="--pc:var(--orange)"><span class="em">📒</span><b>Digital Garage</b><p>Every service, part &amp; expense — the app becomes the car's memory. Switching away = losing history.</p><span class="pr">Now</span></div>
+      <div class="svc" style="--pc:var(--orange)"><span class="em">🧾</span><b>Paperwork Autopilot</b><p>Fines, registration, insurance expiry — tracked and renewed with one tap.</p><span class="pr">Now</span></div>
+      <div class="svc" style="--pc:var(--orange)"><span class="em">🧔</span><b>My Regular Driver Sub</b><p>The JustLife loop productized — lock your driver's weekly slots.</p><span class="pr">Now</span></div>
+      <div class="svc" style="--pc:var(--blue)"><span class="em">🆘</span><b>Accident SOS</b><p>One button: photo capture, tow, police report, insurance claim.</p><span class="pr">Next</span></div>
+      <div class="svc" style="--pc:var(--blue)"><span class="em">🔋</span><b>Doorstep Tyre &amp; Battery</b><p>Fixed in your parking spot within hours, priced upfront.</p><span class="pr">Next</span></div>
+      <div class="svc" style="--pc:var(--blue)"><span class="em">🧳</span><b>Trip-Ready Check</b><p>Pre-road-trip inspection bundle + on-highway assist.</p><span class="pr">Next</span></div>
+      <div class="svc" style="--pc:var(--slate)"><span class="em">📈</span><b>Live Resale Value</b><p>What your documented car is worth today + sell concierge.</p><span class="pr">Later</span></div>
+      <div class="svc" style="--pc:var(--slate)"><span class="em">⚡</span><b>EV Transition</b><p>Charger install, charging maps, cost-vs-petrol for your car.</p><span class="pr">Later</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  "Careem shows you a car. We introduce you to a person." · 8-lens sprint · 53 agents · 12 UX laws
+</footer>
+
+</body>
+</html>

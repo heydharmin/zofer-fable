@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chauffeur Super-App — Clickable Prototype</title>
+<style>
+  :root{
+    --bg:#EDEFF3; --card:#fff; --ink:#12151A; --ink2:#39414E; --muted:#69707E; --faint:#9AA1AE;
+    --line:#E4E7EE; --line2:#EEF0F4; --blue:#2456E0; --blue-soft:#E9EFFF; --teal:#0E9C9C;
+    --orange:#FF6A00; --orange-soft:#FFF1E7; --good:#1EA34B; --good-soft:#E9F6EE;
+    --gold:#B7791F; --gold-soft:#FBF3E2; --slate:#5A6478; --slate-soft:#EEF0F3;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:
+    radial-gradient(1200px 600px at 20% -10%, #fff, transparent),
+    var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+  .topbar{text-align:center;padding:26px 20px 6px}
+  .topbar .ey{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--blue)}
+  .topbar h1{margin:9px 0 0;font-size:22px;font-weight:800;letter-spacing:-.02em}
+  .topbar p{margin:7px 0 0;color:var(--muted);font-size:13.5px}
+
+  .stage{display:flex;gap:44px;justify-content:center;align-items:flex-start;padding:26px 20px 60px;flex-wrap:wrap}
+
+  /* device */
+  .device{width:330px;flex:none;position:sticky;top:20px}
+  .phone{width:330px;background:#0B0D11;border-radius:44px;padding:12px;box-shadow:0 40px 80px -34px rgba(15,22,45,.55)}
+  .scr{background:#fff;border-radius:33px;overflow:hidden;position:relative;height:690px}
+  .notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:96px;height:24px;background:#0B0D11;border-radius:0 0 16px 16px;z-index:20}
+  .sb{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:12px 22px 4px;font-size:12px;font-weight:600;z-index:10;background:#fff}
+  .sb .bat{background:var(--ink);color:#fff;border-radius:4px;padding:1px 5px;font-size:10px}
+
+  .screen{position:absolute;inset:0;top:34px;overflow-y:auto;overflow-x:hidden;padding:6px 14px calc(66px + 14px);display:none;animation:fade .28s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .screen::-webkit-scrollbar{width:0}
+  .flowscreen{top:0;padding-top:40px}
+
+  /* bottom tabs (fixed in device) */
+  .tabbar{position:absolute;left:0;right:0;bottom:0;height:64px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;z-index:15}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;color:var(--faint);cursor:pointer}
+  .tab .ti{font-size:18px}
+  .tab.on{color:var(--blue);font-weight:700}
+
+  /* generic bits */
+  .back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);cursor:pointer;margin:2px 0 8px;font-weight:600}
+  .h1{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:4px 1px 4px}
+  .h1 small{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:3px}
+  .sech{display:flex;align-items:baseline;margin:16px 2px 9px}
+  .sech h3{font-size:14px;font-weight:800}
+  .sech a{margin-left:auto;font-size:11px;color:var(--blue);font-weight:700;cursor:pointer}
+  .primary{background:var(--orange);color:#fff;border-radius:13px;text-align:center;padding:13px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 10px 22px -10px rgba(255,106,0,.6)}
+  .primary.dark{background:var(--ink);box-shadow:none}
+  .ghost{border:1px solid var(--line);border-radius:12px;text-align:center;padding:11px;font-size:12.5px;font-weight:600;color:var(--ink2);cursor:pointer;margin-top:8px}
+  .tap{cursor:pointer;transition:transform .08s}
+  .tap:active{transform:scale(.975)}
+  .muted{color:var(--muted)} .fromp{color:var(--blue);font-weight:700}
+
+  /* ===== HOME ===== */
+  .greet{display:flex;align-items:center;gap:8px;margin:6px 2px 10px}
+  .greet b{font-size:15px;font-weight:800}
+  .greet .sp{margin-left:auto;display:flex;gap:6px}
+  .rico{width:30px;height:30px;border-radius:50%;background:#F1F2F5;display:grid;place-items:center;font-size:14px;cursor:pointer}
+  .rico.lang{width:auto;border-radius:15px;padding:0 10px;font-size:11px;font-weight:700}
+  .carchip{display:flex;align-items:center;gap:10px;border:1.5px solid var(--good);background:var(--good-soft);border-radius:14px;padding:11px 12px;cursor:pointer}
+  .carchip .ci{font-size:18px}
+  .carchip .t b{font-size:12.5px;display:block}
+  .carchip .t span{font-size:11px;color:var(--good);font-weight:600}
+  .carchip .chev{margin-left:auto;color:var(--slate)}
+  .search{display:flex;align-items:center;gap:8px;background:#F1F2F5;border-radius:13px;padding:11px 12px;margin-top:10px;font-size:13px;color:var(--faint);cursor:pointer}
+  .bookcard{margin-top:12px;border-radius:16px;background:linear-gradient(160deg,#1B1F27,#2C323E);color:#fff;padding:14px;cursor:pointer}
+  .bookcard .bh{font-size:16px;font-weight:800}
+  .bookcard .bs{font-size:11.5px;color:#B9C0CC;margin-top:2px}
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+  .seg div{border:1px solid #3A4150;border-radius:10px;padding:8px;text-align:center}
+  .seg div.on{background:#fff;color:var(--ink);border-color:#fff}
+  .seg .lab{font-size:11px;font-weight:700} .seg .rt{font-size:10px;margin-top:2px;color:#AEB6C6}
+  .seg div.on .rt{color:var(--muted)}
+  .bookcta{margin-top:11px;background:var(--orange);color:#fff;border-radius:11px;text-align:center;padding:10px;font-size:12.5px;font-weight:700}
+  .regs{display:flex;gap:9px;overflow-x:auto;padding-bottom:2px}
+  .reg{flex:none;width:66px;text-align:center;cursor:pointer}
+  .reg .av{width:52px;height:52px;border-radius:50%;margin:0 auto;background:linear-gradient(135deg,#3A4152,#20242E);display:grid;place-items:center;font-size:22px;position:relative;border:2px solid var(--gold)}
+  .reg .av .ok{position:absolute;right:-2px;bottom:-2px;width:16px;height:16px;border-radius:50%;background:var(--good);color:#fff;font-size:9px;display:grid;place-items:center;border:2px solid #fff}
+  .reg.add .av{background:#F1F2F5;border:1.5px dashed var(--faint);color:var(--faint)}
+  .reg .nm{font-size:10px;font-weight:700;margin-top:5px}
+  .reg .st{font-size:9px;color:var(--good)}
+  .rail{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+  .rt-card{flex:none;width:74px;border:1px solid var(--line);border-radius:13px;padding:9px 6px;text-align:center;cursor:pointer}
+  .rt-card .em{font-size:22px}.rt-card .nm{font-size:10px;font-weight:600;margin-top:5px;line-height:1.15}.rt-card .pr{font-size:9.5px;color:var(--blue);font-weight:700;margin-top:3px}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .gc{border:1px solid var(--line);border-radius:12px;padding:10px 11px;display:flex;align-items:center;gap:8px;cursor:pointer}
+  .gc .em{font-size:18px}.gc .nm{font-size:11.5px;font-weight:600;line-height:1.15}
+  .gc .pr{font-size:10px;font-weight:700;margin-top:2px}.gc .pr.fix{color:var(--ink)}.gc .pr.from{color:var(--blue)}.gc .pr .t{color:var(--good)}
+  .subs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .sub{border:1px solid var(--line);border-radius:12px;padding:9px 7px;text-align:center;cursor:pointer}
+  .sub .cal{font-size:17px}.sub .nm{font-size:10.5px;font-weight:700;margin-top:2px}.sub .pr{font-size:9.5px;color:var(--muted)}
+  .sub .save{display:inline-block;margin-top:3px;font-size:8.5px;font-weight:700;color:var(--good);background:var(--good-soft);border-radius:5px;padding:1px 5px}
+  .promo{margin-top:14px;border-radius:15px;background:linear-gradient(120deg,#20242E,#3A4150);color:#fff;padding:13px;cursor:pointer}
+  .promo b{font-size:14px}.promo p{font-size:11px;color:#C2C8D4;margin:3px 0 0}.promo .pl{display:inline-block;margin-top:9px;background:#fff;color:var(--ink);border-radius:9px;padding:6px 11px;font-size:11px;font-weight:700}
+  .suggest{text-align:center;font-size:11px;color:var(--muted);margin-top:14px}.suggest u{color:var(--ink)}
+
+  /* ===== SERVICES ===== */
+  .bento{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .bt{border:1px solid var(--line);border-radius:13px;padding:10px 8px;text-align:center;cursor:pointer}
+  .bt .em{font-size:22px}.bt .nm{font-size:10px;font-weight:600;margin-top:5px}.bt .pr{font-size:9px;color:var(--blue);font-weight:700}
+  .bt.wide{grid-column:span 2;display:flex;align-items:center;gap:10px;text-align:left}
+  .bt.tall{grid-row:span 2;display:flex;flex-direction:column;justify-content:center}
+
+  /* ===== BOOKING ===== */
+  .field{border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:9px;display:flex;align-items:center;gap:9px;font-size:12.5px;cursor:pointer}
+  .field .k{color:var(--muted);font-size:11px}.field b{margin-left:auto;font-weight:700}
+  .toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px}
+  .toggle div{border:1.5px solid var(--line);border-radius:11px;padding:10px;text-align:center;font-size:12px;font-weight:700;cursor:pointer}
+  .toggle div.on{border-color:var(--ink);background:#FAFAFB}
+  .stickyfare{position:sticky;bottom:0;background:#fff;padding-top:8px}
+  .fbar{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px}
+  .fbar b{color:var(--ink);font-size:15px}
+  .opt{border:1.5px solid var(--line);border-radius:13px;padding:12px;margin-bottom:10px;position:relative;cursor:pointer}
+  .opt.on{border-color:var(--ink);background:#FAFAFB}
+  .opt .r{position:absolute;right:12px;top:12px;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--faint)}
+  .opt.on .r{border-color:var(--ink);background:radial-gradient(circle at center,var(--ink) 0 44%,transparent 48%)}
+  .opt b{font-size:13px;display:block}.opt .d{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}.opt .pr{font-size:11.5px;font-weight:700;color:var(--blue);margin-top:5px}
+  .facerow{display:flex;margin-top:6px}
+  .fa{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#3A4152,#20242E);border:2px solid #fff;margin-right:-8px;display:grid;place-items:center;font-size:12px}
+  .shield{display:flex;gap:7px;align-items:center;background:var(--good-soft);border:1px solid #CDEBD6;border-radius:10px;padding:8px 10px;font-size:10px;color:#177A38;font-weight:600;margin-bottom:10px}
+  .chips{display:flex;gap:5px;overflow-x:auto;margin:2px 0 10px;padding-bottom:2px}
+  .chip{flex:none;font-size:10px;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:5px 10px;color:var(--ink2);cursor:pointer}
+  .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .dcard{border:1.5px solid var(--line);border-radius:13px;padding:11px;margin-bottom:9px;display:flex;gap:10px;cursor:pointer}
+  .dcard.reg{border-color:var(--gold);background:var(--gold-soft)}
+  .dcard.sel{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink)}
+  .av2{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#3A4152,#1D2330);flex:none;display:grid;place-items:center;font-size:20px;position:relative}
+  .av2 .ok{position:absolute;right:-4px;bottom:-4px;width:16px;height:16px;border-radius:50%;background:var(--good);color:#fff;font-size:9px;display:grid;place-items:center;border:2px solid #fff}
+  .dcard .in{flex:1;min-width:0}.dcard .nm{font-size:13px;font-weight:800;display:flex;gap:6px;align-items:center}
+  .rtag{font-size:8.5px;font-weight:700;background:var(--gold);color:#fff;border-radius:5px;padding:2px 5px;letter-spacing:.03em}
+  .dcard .pf{font-size:10.5px;color:var(--ink2);margin-top:3px;line-height:1.4}.dcard .pf b{color:var(--ink)}
+  .badges{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+  .bdg{font-size:8.5px;font-weight:700;background:var(--slate-soft);color:var(--slate);border-radius:4px;padding:2px 5px}
+  .bdg.g{background:var(--good-soft);color:var(--good)}
+  .dcard .side{text-align:right;flex:none}.dcard .side .pp{font-size:12px;font-weight:800;color:var(--blue)}.dcard .side .et{font-size:9.5px;color:var(--muted);margin-top:2px}
+  .rev{border:1px solid var(--line);border-radius:13px;padding:12px;margin-bottom:10px}
+  .rev .rr{display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0}
+  .rev .rr.tot{border-top:1px solid var(--line);margin-top:5px;padding-top:8px;font-weight:800;font-size:14px}
+  .insure{display:flex;gap:8px;align-items:center;background:var(--blue-soft);border-radius:11px;padding:10px 12px;font-size:11px;color:var(--blue);font-weight:600;margin-bottom:10px}
+  .pays{display:flex;gap:8px;margin-bottom:10px}
+  .pay{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:9px;text-align:center;font-size:11px;font-weight:700;cursor:pointer}
+  .pay.on{border-color:var(--ink);background:#FAFAFB}
+  .track-map{height:150px;border-radius:14px;background:linear-gradient(160deg,#DCE6F5,#EAF0F8);position:relative;overflow:hidden;margin-bottom:10px}
+  .track-map .route{position:absolute;left:20px;right:30px;top:60%;height:3px;background:repeating-linear-gradient(90deg,var(--blue) 0 10px,transparent 10px 18px)}
+  .track-map .carpin{position:absolute;top:calc(60% - 12px);left:34%;font-size:22px;animation:drive 5s linear infinite}
+  @keyframes drive{from{left:16%}to{left:78%}}
+  .pin-row{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:-6px;margin-bottom:10px;padding:0 6px}
+  .pinbox{display:flex;align-items:center;gap:10px;border:1.5px dashed var(--ink);border-radius:12px;padding:11px;margin-bottom:10px;justify-content:center;font-family:var(--mono);font-size:20px;font-weight:800;letter-spacing:8px}
+  .checkl{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
+  .checkl div{font-size:12px;color:var(--ink2)}
+  .stars{color:#F5A623;font-size:26px;letter-spacing:5px;text-align:center;margin:8px 0 4px;cursor:pointer}
+  .tipr{display:flex;gap:6px;justify-content:center;margin:8px 0 12px}
+  .tip{border:1px solid var(--line);border-radius:9px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer}
+  .herocta{background:linear-gradient(120deg,var(--orange),#FF8A3D);color:#fff;border-radius:14px;padding:13px;text-align:center;margin-bottom:9px;cursor:pointer}
+  .herocta b{font-size:14px;display:block}.herocta span{font-size:10.5px;opacity:.9;display:block;margin-top:2px}
+
+  /* ===== PROFILE ===== */
+  .phdr{display:flex;align-items:center;gap:12px;padding:6px 2px 4px}
+  .phdr .pav{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#5B7BFF);display:grid;place-items:center;color:#fff;font-size:22px;font-weight:800}
+  .phdr .pn b{font-size:17px;font-weight:800}
+  .memb{display:inline-flex;align-items:center;gap:5px;margin-top:4px;font-size:10.5px;font-weight:700;color:var(--gold);background:var(--gold-soft);border-radius:999px;padding:3px 9px}
+  .membcard{margin-top:12px;border-radius:15px;background:linear-gradient(120deg,#1B1F27,#33261a);color:#fff;padding:14px;position:relative;overflow:hidden}
+  .membcard b{font-size:14px}.membcard p{font-size:11px;color:#D8C4A6;margin:3px 0 0}.membcard .pl{display:inline-block;margin-top:9px;background:var(--gold);color:#fff;border-radius:9px;padding:6px 11px;font-size:11px;font-weight:700}
+  .qstats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+  .qs{border:1px solid var(--line);border-radius:12px;padding:11px 6px;text-align:center}
+  .qs b{font-size:17px;display:block}.qs span{font-size:9.5px;color:var(--muted)}
+  .rows{margin-top:14px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .prow{display:flex;align-items:center;gap:11px;padding:13px 14px;border-top:1px solid var(--line2);cursor:pointer;font-size:13px}
+  .prow:first-child{border-top:none}
+  .prow .pi{font-size:16px;width:22px;text-align:center}
+  .prow .val{margin-left:auto;font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .prow .val .vok{color:var(--good);font-weight:700}
+  .prow .chev{color:var(--faint)}
+  .grouplbl{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:16px 2px 8px}
+
+  /* ===== FLOW MAP ===== */
+  .flowmap{width:380px;max-width:100%;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
+  .flowmap h3{font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px}
+  .flowmap .sub{font-size:12px;color:var(--muted);margin:5px 0 16px}
+  .fnode{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:11px;padding:10px 12px;font-size:12.5px;font-weight:600;cursor:pointer;background:#fff;transition:.15s}
+  .fnode:hover{border-color:var(--blue)}
+  .fnode.on{border-color:var(--orange);background:var(--orange-soft);color:var(--orange)}
+  .fnode .fi{font-size:15px}
+  .fnode .tagp{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--faint)}
+  .fconn{width:2px;height:14px;background:var(--line);margin:0 0 0 22px}
+  .fbranch{margin-left:22px;border-left:2px solid var(--line);padding-left:14px;margin-top:0}
+  .fbranch .blab{font-family:var(--mono);font-size:9.5px;color:var(--faint);margin:8px 0 5px}
+  .maplegend{margin-top:16px;font-size:11px;color:var(--muted);line-height:1.6}
+  .maplegend b{color:var(--ink)}
+  .hint{margin-top:14px;background:var(--blue-soft);border-radius:11px;padding:11px 13px;font-size:11.5px;color:var(--blue)}
+
+  @media(max-width:820px){.device{position:static}.flowmap{width:330px}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="ey">Clickable prototype · tap to navigate · screen-record & send</span>
+  <h1>Chauffeur super-app — full walkthrough</h1>
+  <p>Home · Services · the book-a-chauffeur flow · Profile. Tap anything highlighted; use the flow map to jump.</p>
+</div>
+
+<div class="stage">
+
+  <!-- DEVICE -->
+  <div class="device">
+    <div class="phone"><div class="scr">
+      <div class="notch"></div>
+      <div class="sb"><span>9:41</span><span>5G <span class="bat">83</span></span></div>
+
+      <!-- ===================== HOME ===================== -->
+      <div class="screen active" id="home">
+        <div class="greet"><b>Good evening, Dharmin</b><span class="sp"><span class="rico">🔔</span><span class="rico lang">EN/عربي</span></span></div>
+        <div class="carchip tap" data-goto="profile"><span class="ci">🚗</span><span class="t"><b>Nissan Patrol · DXB A-1234</b><span>✓ Verified · ready for chauffeur</span></span><span class="chev">▾</span></div>
+        <div class="search tap" data-goto="book-when">🔍 Where to?</div>
+        <div class="bookcard tap" data-goto="book-when">
+          <div class="bh">Book a chauffeur</div>
+          <div class="bs">for your own car · from AED 45/hr</div>
+          <div class="seg"><div><div class="lab">⏱ Pay/Minute</div><div class="rt">AED 2.5/min</div></div><div class="on"><div class="lab">🕐 Hourly</div><div class="rt">from AED 45/hr</div></div></div>
+          <div class="bookcta">Choose destination →</div>
+        </div>
+
+        <div class="sech"><h3>Your regulars</h3><a data-goto="profile">Manage →</a></div>
+        <div class="regs">
+          <div class="reg tap" data-goto="book-choose"><div class="av">🧔<span class="ok">✓</span></div><div class="nm">Rashid</div><div class="st">free 7AM</div></div>
+          <div class="reg tap" data-goto="book-choose"><div class="av">👨🏽<span class="ok">✓</span></div><div class="nm">Ahmed</div><div class="st">next 6PM</div></div>
+          <div class="reg add tap" data-goto="book-when"><div class="av">＋</div><div class="nm">Add</div></div>
+        </div>
+
+        <div class="sech"><h3>Personal Chauffeur</h3><a data-goto="services">See all (7) →</a></div>
+        <div class="rail">
+          <div class="rt-card tap" data-goto="book-when"><div class="em">✈️</div><div class="nm">Airport</div><div class="pr">fr 120</div></div>
+          <div class="rt-card tap" data-goto="book-when"><div class="em">🌙</div><div class="nm">Sober Driver</div><div class="pr">fr 90</div></div>
+          <div class="rt-card tap" data-goto="book-when"><div class="em">🗺️</div><div class="nm">Intercity</div><div class="pr">fr 250</div></div>
+          <div class="rt-card tap" data-goto="book-when"><div class="em">🎒</div><div class="nm">School runs</div><div class="pr">fr 60</div></div>
+          <div class="rt-card tap" data-goto="book-when"><div class="em">🐾</div><div class="nm">Pet to vet</div><div class="pr">fr 70</div></div>
+        </div>
+
+        <div class="sech"><h3>Car errands</h3><a data-goto="services">See all (4) →</a></div>
+        <div class="g2">
+          <div class="gc tap" data-goto="book-when"><span class="em">🔧</span><div><div class="nm">Garage Pick &amp; Drop</div><div class="pr fix">AED 59 · <span class="t">fixed</span></div></div></div>
+          <div class="gc tap" data-goto="book-when"><span class="em">🧾</span><div><div class="nm">RTA Inspection</div><div class="pr fix">AED 69 · <span class="t">fixed</span></div></div></div>
+          <div class="gc tap" data-goto="book-when"><span class="em">🚿</span><div><div class="nm">Car wash</div><div class="pr from">from AED 35</div></div></div>
+          <div class="gc tap" data-goto="book-when"><span class="em">📍</span><div><div class="nm">Move car A→B</div><div class="pr from">from AED 40</div></div></div>
+        </div>
+
+        <div class="sech"><h3>Save more on longer trips</h3></div>
+        <div class="subs">
+          <div class="sub tap" data-goto="book-when"><div class="cal">📘</div><div class="nm">Daily</div><div class="pr">AED 199</div></div>
+          <div class="sub tap" data-goto="book-when"><div class="cal">📙</div><div class="nm">Weekly</div><div class="pr">AED 999</div><span class="save">-15%</span></div>
+          <div class="sub tap" data-goto="book-when"><div class="cal">📕</div><div class="nm">Monthly</div><div class="pr">AED 3,499</div><span class="save">-30%</span></div>
+        </div>
+
+        <div class="promo tap" data-goto="services"><b>Full-time luxury chauffeur</b><p>Your own dedicated driver, monthly.</p><span class="pl">See plans →</span></div>
+        <div class="suggest">Missing a service? <u>Submit a suggestion</u></div>
+      </div>
+
+      <!-- ===================== SERVICES ===================== -->
+      <div class="screen" id="services">
+        <div class="h1">Services<small>Everything for you &amp; your car</small></div>
+        <div class="search">🔍 Search services</div>
+        <div class="sech"><h3>Personal Chauffeur</h3></div>
+        <div class="bento">
+          <div class="bt tap" data-goto="book-when"><div class="em">⏱</div><div class="nm">Pay/Minute</div><div class="pr">AED 2.5/min</div></div>
+          <div class="bt tap" data-goto="book-when"><div class="em">🕐</div><div class="nm">Hourly</div><div class="pr">fr 45</div></div>
+          <div class="bt tap" data-goto="book-when"><div class="em">✈️</div><div class="nm">Airport</div><div class="pr">fr 120</div></div>
+          <div class="bt wide tap" data-goto="book-when"><div class="em">🎒</div><div><div class="nm">School runs</div><div class="pr">from AED 60 · recurring</div></div></div>
+          <div class="bt tap" data-goto="book-when"><div class="em">🌙</div><div class="nm">Sober Driver</div><div class="pr">fr 90</div></div>
+          <div class="bt tap" data-goto="book-when"><div class="em">🗺️</div><div class="nm">Intercity</div><div class="pr">fr 250</div></div>
+          <div class="bt tap" data-goto="book-when"><div class="em">🐾</div><div class="nm">Pet to vet</div><div class="pr">fr 70</div></div>
+        </div>
+        <div class="sech"><h3>Car errands</h3></div>
+        <div class="g2">
+          <div class="gc tap" data-goto="book-when"><span class="em">🔧</span><div><div class="nm">Garage Pick &amp; Drop</div><div class="pr fix">AED 59 · <span class="t">fixed</span></div></div></div>
+          <div class="gc tap" data-goto="book-when"><span class="em">🚿</span><div><div class="nm">Car wash</div><div class="pr from">from AED 35</div></div></div>
+          <div class="gc tap" data-goto="book-when"><span class="em">📍</span><div><div class="nm">Move car A→B</div><div class="pr from">from AED 40</div></div></div>
+          <div class="gc tap" data-goto="book-when"><span class="em">🧾</span><div><div class="nm">RTA Inspection</div><div class="pr fix">AED 69 · <span class="t">fixed</span></div></div></div>
+        </div>
+        <div class="sech"><h3>Save more on longer trips</h3></div>
+        <div class="subs">
+          <div class="sub tap" data-goto="book-when"><div class="cal">📘</div><div class="nm">Daily</div><div class="pr">AED 199</div></div>
+          <div class="sub tap" data-goto="book-when"><div class="cal">📙</div><div class="nm">Weekly</div><div class="pr">AED 999</div><span class="save">-15%</span></div>
+          <div class="sub tap" data-goto="book-when"><div class="cal">📕</div><div class="nm">Monthly</div><div class="pr">AED 3,499</div><span class="save">-30%</span></div>
+        </div>
+        <div class="suggest">Missing a service? <u>Submit a suggestion</u></div>
+      </div>
+
+      <!-- ===================== BOOK: WHEN & WHERE ===================== -->
+      <div class="screen" id="book-when">
+        <div class="back" data-goto="home">← Home</div>
+        <div class="h1">When &amp; where<small>Hourly chauffeur · your Nissan Patrol</small></div>
+        <div class="toggle"><div id="tg-now" class="on tap" onclick="setWhen('now')">NOW</div><div id="tg-sched" class="tap" onclick="setWhen('sched')">SCHEDULE 🗓</div></div>
+        <div class="field"><span class="k">Pickup</span><b>🏠 Home garage</b></div>
+        <div class="field"><span class="k">Route</span><b>Home → GEMS School</b></div>
+        <div class="field"><span class="k">Car</span><b>🚙 Nissan Patrol ▾</b></div>
+        <div id="when-note" class="muted" style="font-size:11px;padding:2px 2px 10px">On-demand → we auto-match the fastest chauffeur.</div>
+        <div class="stickyfare">
+          <div class="fbar"><span>Fixed fare · no surge</span><b>AED 45</b></div>
+          <div class="primary tap" data-goto="book-fork">Next →</div>
+        </div>
+      </div>
+
+      <!-- ===================== BOOK: MATCH FORK ===================== -->
+      <div class="screen" id="book-fork">
+        <div class="back" data-goto="book-when">← Back</div>
+        <div class="h1">Who drives your Patrol?<small id="fork-sub">Now · ~9 min away</small></div>
+        <div class="opt on" id="opt-auto" onclick="pickFork('auto')"><span class="r"></span><b>Auto-match · fastest</b><div class="d">Verified chauffeur, photo + ID shown the moment he's assigned.</div><div class="pr">AED 49</div></div>
+        <div class="opt" id="opt-choose" onclick="pickFork('choose')"><span class="r"></span><b>Choose your chauffeur</b><div class="d" id="choose-d">Ahmed drove you last week · 12 available now</div><div class="facerow"><span class="fa">🧔</span><span class="fa">👨🏽</span><span class="fa">🧑🏽</span></div><div class="pr" id="choose-pr">+AED 5 · waived for regulars</div></div>
+        <div class="primary tap" id="fork-cta" data-goto="book-review">Continue with Auto-match →</div>
+        <div class="hint" style="margin-top:12px">💡 The default protects ETA &amp; supply. Scheduled bookings flip the emphasis to <b>Choose</b>.</div>
+      </div>
+
+      <!-- ===================== BOOK: CHOOSE CHAUFFEUR ===================== -->
+      <div class="screen" id="book-choose">
+        <div class="back" data-goto="book-fork">← Back</div>
+        <div class="h1">Choose your chauffeur<small>Tue 7:00 AM · Home → GEMS School</small></div>
+        <div class="shield">🛡 Every trip insured · all drivers Emirates ID + Police + RTA verified</div>
+        <div class="chips"><span class="chip on">My regulars</span><span class="chip">Fastest</span><span class="chip">Top rated</span><span class="chip">العربية</span><span class="chip">Female</span><span class="chip">Kids-trained</span></div>
+        <div class="grouplbl">My regulars</div>
+        <div class="dcard reg tap" onclick="chooseDriver('Rashid')"><span class="av2">🧔<span class="ok">✓</span></span><div class="in"><div class="nm">Rashid K. <span class="rtag">YOUR REGULAR</span></div><div class="pf"><b>7 trips with you</b> · knows your Patrol<br>34 school runs · rebooked by 18 families</div><div class="badges"><span class="bdg g">EID ✓</span><span class="bdg g">Police ✓</span><span class="bdg g">RTA ✓</span><span class="bdg">EN·عربي·हिंदी</span></div></div><div class="side"><div class="pp">AED 49</div><div class="et">free 7AM</div></div></div>
+        <div class="grouplbl">Available now</div>
+        <div class="dcard tap" onclick="chooseDriver('Ahmed')"><span class="av2">👨🏽<span class="ok">✓</span></span><div class="in"><div class="nm">Ahmed S. · 4.93★</div><div class="pf">412 trips · <b>great with kids ×11</b><br>12 airport trips this month</div><div class="badges"><span class="bdg g">EID ✓</span><span class="bdg g">Police ✓</span><span class="bdg">EN·اردو</span></div></div><div class="side"><div class="pp">+AED 5</div><div class="et">free 7AM</div></div></div>
+        <div class="dcard tap" onclick="chooseDriver('Layla')"><span class="av2">👩🏽<span class="ok">✓</span></span><div class="in"><div class="nm">Layla H. · 4.97★ <span class="bdg" style="background:#F3E8FF;color:#7C3AED">FEMALE</span></div><div class="pf">208 trips · <b>kids-trained</b><br>rebooked by 22 families</div><div class="badges"><span class="bdg g">EID ✓</span><span class="bdg g">Police ✓</span><span class="bdg">EN·عربي</span></div></div><div class="side"><div class="pp">+AED 8</div><div class="et">7:10AM</div></div></div>
+      </div>
+
+      <!-- ===================== BOOK: REVIEW & PAY ===================== -->
+      <div class="screen" id="book-review">
+        <div class="back" data-goto="book-fork">← Back</div>
+        <div class="h1">Review &amp; pay</div>
+        <div class="dcard reg" style="cursor:default"><span class="av2">🧔<span class="ok">✓</span></span><div class="in"><div class="nm" id="rev-name">Rashid K. · 4.93★</div><div class="pf">Tomorrow 7:00 AM · Home → GEMS School</div><div class="badges"><span class="bdg g">EID ✓</span><span class="bdg g">Police ✓</span><span class="bdg g">RTA ✓</span></div></div></div>
+        <div class="insure">🛡 Your Patrol covered up to AED 50,000 while Rashid drives ›</div>
+        <div class="rev">
+          <div class="rr"><span class="muted">Hourly base</span><span>AED 45</span></div>
+          <div class="rr"><span class="muted">Choose-your-driver</span><span>AED 5</span></div>
+          <div class="rr"><span class="muted">VAT 5%</span><span>AED 2.5</span></div>
+          <div class="rr tot"><span>Total</span><span>AED 52.5</span></div>
+        </div>
+        <div class="pays"><div class="pay on">Apple&nbsp;Pay</div><div class="pay">•••• 4291</div><div class="pay">Cash</div></div>
+        <div class="ghost" style="margin-bottom:9px">This run weekly? Save AED 210/mo →</div>
+        <div class="primary tap" data-goto="book-track">Confirm booking · AED 52.5</div>
+      </div>
+
+      <!-- ===================== BOOK: LIVE TRACK ===================== -->
+      <div class="screen" id="book-track">
+        <div class="h1">Rashid is on the way<small>6 min away · arriving on foot to take your keys</small></div>
+        <div class="track-map"><div class="route"></div><div class="carpin">🚗</div></div>
+        <div class="grouplbl">Hand over your keys with this PIN</div>
+        <div class="pinbox">4 8 2 1</div>
+        <div class="checkl">
+          <div>☑ Fuel above ¼ tank</div>
+          <div>☑ Salik tag active</div>
+          <div>📸 Odometer &amp; fuel photo auto-attached</div>
+          <div>🎒 Guardian mode: live-share this trip with your spouse ›</div>
+        </div>
+        <div class="ghost">🆘 Safety centre · SOS</div>
+        <div class="primary tap" data-goto="book-rate" style="margin-top:8px">Simulate: car returned →</div>
+      </div>
+
+      <!-- ===================== BOOK: RATE & REBOOK ===================== -->
+      <div class="screen" id="book-rate">
+        <div class="h1" style="text-align:center">How was Rashid?<small>Patrol returned · keys with you ✓</small></div>
+        <div style="font-size:40px;text-align:center;margin-top:6px">🧔</div>
+        <div class="stars">★ ★ ★ ★ ★</div>
+        <div class="tipr"><span class="tip">Tip 10</span><span class="tip">20</span><span class="tip">50</span></div>
+        <div class="herocta tap" data-goto="home"><b>⭐ Make Rashid your regular</b><span>he gets your bookings first · 90s priority window</span></div>
+        <div class="ghost" data-goto="home">Book again · same time next week</div>
+        <div class="ghost" data-goto="home">School run weekly · save AED 210/mo</div>
+        <div class="ghost" data-goto="home">Done → back to Home</div>
+      </div>
+
+      <!-- ===================== PROFILE (assets-first) ===================== -->
+      <div class="screen" id="profile">
+        <div class="phdr"><div class="pav">D</div><div class="pn"><b>Dharmin Al-Falasi</b><div class="memb">🟡 Rafeeq Plus · 128 trips</div></div></div>
+
+        <!-- 1 · Membership + Wallet spine -->
+        <div class="membcard">
+          <b>Rafeeq Plus · renews 3 Aug</b>
+          <p>Hero benefit: your <b style="color:#fff">Choose-a-driver fee is waived</b> · priority dispatch · 10% off errands</p>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+            <div style="flex:1"><div style="font-size:10px;color:#D8C4A6">Wallet</div><div style="font-size:16px;font-weight:800">AED 240</div></div>
+            <div style="flex:1"><div style="font-size:10px;color:#D8C4A6">Saved this month</div><div style="font-size:16px;font-weight:800">AED 310</div></div>
+            <span class="pl">Top up</span>
+          </div>
+        </div>
+
+        <!-- 2 · Garage (assets-first, doc vault) -->
+        <div class="grouplbl">🚗 My garage · documents &amp; KYC</div>
+        <div class="rows">
+          <div class="prow" style="align-items:flex-start;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;width:100%;gap:11px"><span class="pi">🚙</span><b>Nissan Patrol · A 12345</b><span class="val"><span class="bdg g" style="font-size:9px">◉ ACTIVE</span></span></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;padding-left:33px">
+              <span class="bdg g">Mulkiya ✓</span>
+              <span class="bdg" style="background:var(--gold-soft);color:var(--gold)">Insurance ⚠ 21d</span>
+              <span class="bdg" style="background:var(--gold-soft);color:var(--gold)">RTA ⚠ 12 Aug</span>
+              <span class="bdg">Salik linked</span>
+            </div>
+            <div class="tap" data-goto="book-when" style="margin-left:33px;font-size:11px;color:var(--blue);font-weight:700">⚠ Insurance expiring → book RTA Inspection AED 69 →</div>
+          </div>
+          <div class="prow"><span class="pi">＋</span>Add another car<span class="val"><span class="chev">›</span></span></div>
+        </div>
+
+        <!-- 3 · My Chauffeurs — the regulars ladder (north-star engine) -->
+        <div class="grouplbl">🧔 My chauffeurs · same-pro guarantee</div>
+        <div class="rows">
+          <div class="prow" style="align-items:flex-start"><span class="av2" style="width:38px;height:38px;font-size:16px;border-radius:11px">🧔<span class="ok">✓</span></span>
+            <div style="flex:1"><div style="font-weight:800;font-size:12.5px">Rashid K. <span class="rtag">REGULAR</span></div>
+              <div style="font-size:10.5px;color:var(--muted);margin-top:2px">Default for 🎒 School runs · 🔥 6-trip streak</div>
+              <div class="tap" data-goto="book-choose" style="font-size:10.5px;color:var(--blue);font-weight:700;margin-top:3px">Book Rashid →</div>
+            </div>
+          </div>
+          <div class="prow" style="align-items:flex-start"><span class="av2" style="width:38px;height:38px;font-size:16px;border-radius:11px">👨🏽<span class="ok">✓</span></span>
+            <div style="flex:1"><div style="font-weight:800;font-size:12.5px">Ahmed S.</div>
+              <div style="font-size:10.5px;color:var(--muted);margin-top:2px">Default for ✈️ Airport · 4 trips</div>
+              <div class="tap" data-goto="book-choose" style="font-size:10.5px;color:var(--blue);font-weight:700;margin-top:3px">Book Ahmed →</div>
+            </div>
+          </div>
+          <div class="prow"><span class="pi">＋</span>Pin a driver to a use-case<span class="val"><span class="chev">›</span></span></div>
+        </div>
+
+        <div class="grouplbl">Plans &amp; money</div>
+        <div class="rows">
+          <div class="prow"><span class="pi">🔁</span>Standing bookings<span class="val">School run · Weekly <span class="chev">›</span></span></div>
+          <div class="prow"><span class="pi">👛</span>One wallet &amp; rewards<span class="val">AED 240 · ledger <span class="chev">›</span></span></div>
+          <div class="prow"><span class="pi">💳</span>Payment methods<span class="val">Apple Pay · •••• 4291 <span class="chev">›</span></span></div>
+          <div class="prow"><span class="pi">🎁</span>Refer &amp; earn<span class="val">AED 50 each <span class="chev">›</span></span></div>
+          <div class="prow"><span class="pi">🧾</span>Trips &amp; receipts<span class="val">128 <span class="chev">›</span></span></div>
+        </div>
+
+        <div class="grouplbl">Trust, family &amp; settings</div>
+        <div class="rows">
+          <div class="prow"><span class="pi">🛡</span>Safety centre<span class="val">SOS · no-claims protected <span class="chev">›</span></span></div>
+          <div class="prow"><span class="pi">👨‍👩‍👧</span>Family / household<span class="val">Add members <span class="chev">›</span></span></div>
+          <div class="prow"><span class="pi">📍</span>Saved places<span class="val">Home · Work · School <span class="chev">›</span></span></div>
+          <div class="prow"><span class="pi">🌐</span>Language<span class="val">EN / عربي <span class="chev">›</span></span></div>
+          <div class="prow"><span class="pi">🔔</span>Notifications<span class="val"><span class="chev">›</span></span></div>
+          <div class="prow"><span class="pi">💬</span>Help &amp; support<span class="val"><span class="chev">›</span></span></div>
+          <div class="prow"><span class="pi">↩︎</span>Sign out<span class="val"><span class="chev">›</span></span></div>
+        </div>
+        <div style="height:8px"></div>
+      </div>
+
+      <!-- TAB BAR -->
+      <div class="tabbar">
+        <div class="tab on" data-tab="home" data-goto="home"><span class="ti">⌂</span>Home</div>
+        <div class="tab" data-tab="services" data-goto="services"><span class="ti">☰</span>Services</div>
+        <div class="tab" data-tab="cars" data-goto="profile"><span class="ti">🚗</span>Cars</div>
+        <div class="tab" data-tab="profile" data-goto="profile"><span class="ti">👤</span>Account</div>
+      </div>
+
+    </div></div>
+  </div>
+
+  <!-- FLOW MAP -->
+  <div class="flowmap">
+    <h3>🗺️ Flow map</h3>
+    <p class="sub">The screen you're on lights up. Tap any node to jump.</p>
+
+    <div class="fnode" data-goto="home"><span class="fi">⌂</span>Home <span class="tagp">tab</span></div>
+    <div class="fconn"></div>
+    <div class="fnode" data-goto="services"><span class="fi">☰</span>Services catalog <span class="tagp">tab</span></div>
+    <div class="fconn"></div>
+    <div class="fnode" data-goto="book-when"><span class="fi">📍</span>When &amp; where <span class="tagp">step 1</span></div>
+    <div class="fconn"></div>
+    <div class="fnode" data-goto="book-fork"><span class="fi">🔀</span>Match fork ★ <span class="tagp">the default</span></div>
+    <div class="fbranch">
+      <div class="blab">auto-match →</div>
+      <div class="blab">or choose ↓</div>
+      <div class="fnode" data-goto="book-choose"><span class="fi">🧔</span>Choose chauffeur <span class="tagp">JustLife</span></div>
+    </div>
+    <div class="fconn"></div>
+    <div class="fnode" data-goto="book-review"><span class="fi">💳</span>Review &amp; pay <span class="tagp">step 3</span></div>
+    <div class="fconn"></div>
+    <div class="fnode" data-goto="book-track"><span class="fi">🛰</span>Live handoff · PIN <span class="tagp">step 4</span></div>
+    <div class="fconn"></div>
+    <div class="fnode" data-goto="book-rate"><span class="fi">♥</span>Rate &amp; rebook <span class="tagp">retention</span></div>
+    <div class="fconn"></div>
+    <div class="fnode" data-goto="profile"><span class="fi">👤</span>Profile / Account <span class="tagp">tab</span></div>
+
+    <div class="hint">🎬 To record: hit your screen recorder, then walk Home → Book → Fork → Choose → Pay → Track → Rate. ~40 seconds.</div>
+    <div class="maplegend"><b>The funnel:</b> one-off → favorite → regular → subscription. The north-star is <b>repeat-driver rebooking rate</b>.</div>
+  </div>
+
+</div>
+
+<!-- ===== IMPROVE + FEATURES REFERENCE ===== -->
+<div class="refwrap">
+  <div class="ref two">
+    <div class="refcol">
+      <div class="refhd"><span class="ey2">Ship this</span><h2>10 UX changes for a coherent, premium feel</h2></div>
+      <div class="chk"><span class="e s">S</span> One design-system: single icon set, one card, one type scale across all tabs</div>
+      <div class="chk"><span class="e s">S</span> Standard price token everywhere — AED, savings-% chip, "next renewal" date</div>
+      <div class="chk"><span class="e s">S</span> One persistent bottom nav + coherent back &amp; step-progress pattern</div>
+      <div class="chk"><span class="e m">M</span> Price on <b>every</b> tile (kill the "no price" cards) — information scent</div>
+      <div class="chk"><span class="e m">M</span> WCAG 2.2 AA pass: accessible names on icon buttons, 44px targets, contrast</div>
+      <div class="chk"><span class="e m">M</span> "Your regulars" as one shared object — Home shelf = Choose card = Profile row</div>
+      <div class="chk"><span class="e m">M</span> Unify verification into <b>one trust badge</b> (driver credential + per-car eligibility)</div>
+      <div class="chk"><span class="e m">M</span> Reorder Profile assets-first: Membership+Wallet → Garage → Regulars → settings sink</div>
+      <div class="chk"><span class="e l">L</span> One RTL contract (logical CSS props) — whitelist what mirrors, numerals stay LTR</div>
+      <div class="chk"><span class="e l">L</span> One AED wallet spine funding chauffeur + errands + subscriptions</div>
+    </div>
+    <div class="refcol">
+      <div class="refhd"><span class="ey2 o">Add this</span><h2>12 features to complete the super-app</h2></div>
+      <div class="fgrid">
+        <div class="fc2 n"><b>My Chauffeurs ladder</b><p>The north-star engine as a Profile object — pin a driver per use-case.</p><span class="pt">Now</span></div>
+        <div class="fc2 n"><b>Standing bookings</b><p>Rashid = school runs auto-books your regular into the fork.</p><span class="pt">Now</span></div>
+        <div class="fc2 n"><b>One AED wallet</b><p>Single stored value for everything — credits, refunds, referrals.</p><span class="pt">Now</span></div>
+        <div class="fc2 n"><b>Rafeeq Plus</b><p>~AED 39/mo — hero benefit waives the choose-a-driver fee.</p><span class="pt">Now</span></div>
+        <div class="fc2 n"><b>The Garage vault</b><p>Cars as objects holding Mulkiya / insurance / RTA docs.</p><span class="pt">Now</span></div>
+        <div class="fc2 x"><b>Paperwork Autopilot</b><p>Deadline-aware: expiry → auto-generates the errand booking.</p><span class="pt">Next</span></div>
+        <div class="fc2 x"><b>Family / household</b><p>Members, cars, one shared wallet &amp; regulars roster.</p><span class="pt">Next</span></div>
+        <div class="fc2 x"><b>Same-driver streaks</b><p>Streak-at-risk nudges fight defection to a stranger.</p><span class="pt">Next</span></div>
+        <div class="fc2 x"><b>Legible insurance</b><p>Per-trip cover + "no-claims bonus protected" — the moat.</p><span class="pt">Next</span></div>
+        <div class="fc2 x"><b>Earned status tracks</b><p>Relationship + Trust tiers, separate from paid Plus.</p><span class="pt">Next</span></div>
+        <div class="fc2 l"><b>Corporate profile</b><p>Fleet, cost centers, VAT-compliant invoicing.</p><span class="pt">Later</span></div>
+        <div class="fc2 l"><b>Referral + savings ledger</b><p>"Saved vs paid" loop that makes value visible.</p><span class="pt">Later</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="reffoot">4 sprints · 197 agents · benchmarked vs Careem · Urban Company · JustLife · Uber Reserve — the north-star through every screen: <b>repeat-driver rebooking rate</b></div>
+</div>
+
+<style>
+  .refwrap{max-width:1120px;margin:0 auto;padding:10px 24px 70px}
+  .ref.two{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+  @media(max-width:820px){.ref.two{grid-template-columns:1fr;gap:26px}}
+  .ey2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+  .ey2.o{color:var(--orange)}
+  .refhd h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:10px 0 16px}
+  .chk{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-bottom:8px;font-size:13px;color:var(--ink2);line-height:1.45}
+  .chk b{color:var(--ink)}
+  .chk .e{flex:none;width:20px;height:20px;border-radius:6px;font-family:var(--mono);font-size:10px;font-weight:700;display:grid;place-items:center;color:#fff}
+  .e.s{background:var(--good)} .e.m{background:var(--blue)} .e.l{background:var(--slate)}
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:520px){.fgrid{grid-template-columns:1fr}}
+  .fc2{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px;position:relative;overflow:hidden}
+  .fc2::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+  .fc2.n::before{background:var(--orange)} .fc2.x::before{background:var(--blue)} .fc2.l::before{background:var(--slate)}
+  .fc2 b{font-size:13px;letter-spacing:-.01em}
+  .fc2 p{font-size:11.5px;color:var(--muted);margin:4px 0 0;line-height:1.4}
+  .fc2 .pt{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#fff;border-radius:5px;padding:2px 7px}
+  .fc2.n .pt{background:var(--orange)} .fc2.x .pt{background:var(--blue)} .fc2.l .pt{background:var(--slate)}
+  .reffoot{text-align:center;font-size:12px;color:var(--muted);margin-top:26px;font-family:var(--mono)}
+  .reffoot b{color:var(--ink)}
+</style>
+
+<script>
+  const screens = document.querySelectorAll('.screen');
+  const scrollBox = null;
+  function goto(id){
+    const el = document.getElementById(id);
+    if(!el) return;
+    screens.forEach(s=>s.classList.remove('active'));
+    el.classList.add('active');
+    el.scrollTop = 0;
+    // tabs
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on', t.dataset.goto===id || (t.dataset.tab==='home'&&id==='home')));
+    const tabMap = {home:'home', services:'services', profile:'profile'};
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+    if(id==='services') sel('services'); else if(id==='profile') sel('profile'); else if(id==='home') sel('home'); else sel(null);
+    // flow map highlight
+    document.querySelectorAll('.fnode').forEach(n=>n.classList.toggle('on', n.dataset.goto===id));
+  }
+  function sel(tab){ if(!tab) return; document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on', t.dataset.tab===tab)); }
+
+  document.addEventListener('click', (e)=>{
+    const t = e.target.closest('[data-goto]');
+    if(t){ goto(t.dataset.goto); }
+  });
+
+  // when & where toggle
+  function setWhen(mode){
+    document.getElementById('tg-now').classList.toggle('on', mode==='now');
+    document.getElementById('tg-sched').classList.toggle('on', mode==='sched');
+    const note=document.getElementById('when-note');
+    window._sched = mode==='sched';
+    note.textContent = mode==='sched'
+      ? 'Scheduled → you can CHOOSE your chauffeur (lead time removes the ETA penalty).'
+      : 'On-demand → we auto-match the fastest chauffeur.';
+  }
+  // fork logic — scheduled flips emphasis to Choose
+  function pickFork(which){
+    const a=document.getElementById('opt-auto'), c=document.getElementById('opt-choose');
+    a.classList.toggle('on', which==='auto'); c.classList.toggle('on', which==='choose');
+    const cta=document.getElementById('fork-cta');
+    if(which==='choose'){ cta.textContent='Continue → Choose your chauffeur'; cta.dataset.goto='book-choose'; }
+    else { cta.textContent='Continue with Auto-match →'; cta.dataset.goto='book-review'; }
+  }
+  // reflect scheduled state when entering fork
+  const forkObserver = new MutationObserver(()=>{
+    const fork=document.getElementById('book-fork');
+    if(fork.classList.contains('active')){
+      const sub=document.getElementById('fork-sub');
+      if(window._sched){ sub.textContent='Scheduled · choose unlocked'; pickFork('choose'); }
+      else { sub.textContent='Now · ~9 min away'; pickFork('auto'); }
+    }
+  });
+  forkObserver.observe(document.getElementById('book-fork'), {attributes:true, attributeFilter:['class']});
+
+  function chooseDriver(name){
+    const map={Rashid:'Rashid K. · 4.93★', Ahmed:'Ahmed S. · 4.93★', Layla:'Layla H. · 4.97★'};
+    document.getElementById('rev-name').textContent = map[name]||name;
+    goto('book-review');
+  }
+</script>
+</body>
+</html>

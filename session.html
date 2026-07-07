@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Council Session — Chauffeur App Home</title>
+<style>
+  :root{
+    --paper:#F5F6F9; --paper-2:#FFFFFF; --ink:#12151A; --ink-2:#39414E;
+    --muted:#69707E; --faint:#98A0AD; --line:#E0E4EB; --line-2:#EDEFF4;
+    --blue:#2456E0; --blue-soft:#E9EFFF;
+    --teal:#0E9C9C; --teal-soft:#E3F5F5;
+    --indigo:#5B62E8; --indigo-soft:#ECEDFD;
+    --orange:#FF6A00; --orange-soft:#FFF1E7;
+    --crit:#C92A2A; --crit-soft:#FBEBEB;
+    --major:#B45309; --major-soft:#F9F0E1;
+    --minor:#5B6472; --minor-soft:#EEF0F3;
+    --kill:#B0143C; --kill-soft:#FBE9EE;
+    --good:#2B8A3E; --good-soft:#E7F5EB;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.58}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+  h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.02em;line-height:1.12;text-wrap:balance}
+  p{margin:0}
+  .mono{font-family:var(--mono)}
+  .eyebrow{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;display:inline-flex;align-items:center;gap:9px}
+  .eyebrow::before{content:"";width:20px;height:1.5px;background:currentColor}
+
+  /* header */
+  header{background:var(--ink);color:#EAEDF3;padding:40px 0 34px}
+  header .eyebrow{color:#8AA6FF}
+  header h1{color:#fff;font-size:clamp(28px,4.4vw,44px);margin:14px 0 0;letter-spacing:-.03em}
+  header .goal{color:#AEB6C6;max-width:70ch;margin-top:16px;font-size:15px}
+  .meta-strip{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .pill{font-family:var(--mono);font-size:12px;border:1px solid #2A303C;background:#181C24;border-radius:999px;padding:7px 13px;color:#C7CEDA;display:inline-flex;gap:8px;align-items:center}
+  .pill b{color:#fff}
+  .pill .o{color:var(--orange)} .pill .g{color:#7BE0A0}
+  .funnel{font-family:var(--mono);font-size:12.5px;color:#AEB6C6;margin-top:18px}
+  .funnel b{color:#fff} .funnel .ar{color:#5A6272;margin:0 8px}
+
+  section{padding:56px 0}
+  .shead{max-width:680px;margin-bottom:32px}
+  .shead h2{font-size:clamp(23px,3vw,31px)}
+  .shead .eyebrow{color:var(--blue)}
+  .shead p{color:var(--ink-2);margin-top:13px;font-size:15.5px}
+
+  /* lenses */
+  .lensgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media(max-width:820px){.lensgrid{grid-template-columns:1fr}}
+  .lens{border:1px solid var(--line);border-radius:14px;background:var(--paper-2);overflow:hidden}
+  .lens .lh{display:flex;align-items:center;gap:11px;padding:16px 18px;border-bottom:1px solid var(--line-2)}
+  .lens .lh .dot{width:11px;height:11px;border-radius:50%;background:var(--c);flex:none}
+  .lens .lh h3{font-size:16px}
+  .lens .lh .cnt{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .lens .lh .role{font-family:var(--mono);font-size:10.5px;color:var(--c);letter-spacing:.05em;text-transform:uppercase}
+  .fitem{padding:13px 18px;border-top:1px solid var(--line-2);display:flex;gap:11px}
+  .fitem:first-of-type{border-top:none}
+  .fitem .sev{flex:none;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:5px;height:fit-content;margin-top:2px}
+  .sev.crit{background:var(--crit-soft);color:var(--crit)}
+  .sev.major{background:var(--major-soft);color:var(--major)}
+  .sev.minor{background:var(--minor-soft);color:var(--minor)}
+  .fitem .ft{font-size:13.5px;color:var(--ink);font-weight:600;letter-spacing:-.01em}
+  .fitem .fo{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.5}
+  .fitem.killed .ft{text-decoration:line-through;text-decoration-color:var(--kill);text-decoration-thickness:1.5px;color:var(--muted)}
+  .fitem .tag-kill{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;color:var(--kill);background:var(--kill-soft);padding:3px 7px;border-radius:5px;height:fit-content;margin-top:2px}
+
+  /* debate */
+  .deb{display:flex;flex-direction:column;gap:16px}
+  .card{border:1px solid var(--line);border-radius:14px;background:var(--paper-2);overflow:hidden}
+  .card .ch{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--line-2)}
+  .card .ch .claim{font-size:15px;font-weight:700;letter-spacing:-.01em;flex:1;min-width:240px}
+  .verdict{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:6px;white-space:nowrap}
+  .verdict.surv{background:var(--good-soft);color:var(--good)}
+  .verdict.narrow{background:var(--blue-soft);color:var(--blue)}
+  .verdict.kill{background:var(--kill-soft);color:var(--kill)}
+  .verdict.conflict{background:var(--orange-soft);color:var(--orange)}
+  .ice{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+  .ice b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .cb{padding:16px 18px}
+  .arg{display:flex;gap:11px;padding:10px 0;font-size:13.5px;line-height:1.55}
+  .arg + .arg{border-top:1px dashed var(--line)}
+  .arg .who{flex:none;width:118px;font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;font-weight:600;padding-top:2px}
+  .arg.attack .who{color:var(--crit)} .arg.defend .who{color:var(--good)} .arg.result .who{color:var(--ink)}
+  .arg .tx{color:var(--ink-2);flex:1}
+  .arg .tx em{color:var(--ink);font-style:normal;font-weight:600}
+  .cs{margin-top:12px;border-left:3px solid var(--blue);background:var(--blue-soft);border-radius:0 10px 10px 0;padding:10px 14px;font-size:12.5px;color:var(--ink-2)}
+  .cs b{color:var(--blue);font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:3px}
+  @media(max-width:560px){.arg{flex-direction:column;gap:3px}.arg .who{width:auto}}
+
+  /* consensus mini */
+  .cons{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:820px){.cons{grid-template-columns:1fr}}
+  .cbox{border:1px solid var(--line);border-radius:12px;background:var(--paper-2);padding:16px 17px}
+  .cbox .n{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .cbox h4{font-size:15px;margin:8px 0 8px}
+  .cbox .lenses-hit{display:flex;flex-wrap:wrap;gap:6px}
+  .lchip{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--c);background:#fff}
+  .lchip::before{content:"● ";color:var(--c)}
+  .cbox p{font-size:12.5px;color:var(--muted);margin-top:10px}
+
+  /* verdict */
+  .verd{background:var(--paper-2);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .vtable{width:100%;border-collapse:collapse}
+  .vtable th,.vtable td{text-align:left;padding:13px 16px;border-top:1px solid var(--line-2);font-size:13.5px}
+  .vtable thead th{border-top:none;background:var(--paper);font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .vtable .rank{font-family:var(--mono);color:var(--faint);font-weight:700}
+  .vtable .lz{font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--c);font-weight:600}
+  .vtable .iceval{font-family:var(--mono);font-weight:700;color:var(--orange);font-variant-numeric:tabular-nums}
+  .vtable .eff{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .wirewrap{margin-top:22px;border:1px solid var(--line);border-radius:14px;background:#0E1116;overflow:hidden}
+  .wirewrap .wbar{padding:11px 16px;border-bottom:1px solid #1E232C;font-family:var(--mono);font-size:11px;color:#8A93A3;letter-spacing:.04em}
+  .wirewrap pre{margin:0;padding:16px;overflow-x:auto;color:#C9D2DE;font-family:var(--mono);font-size:11px;line-height:1.5}
+  .wirewrap pre .add{color:#FF9A52}
+  .moves{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:22px}
+  @media(max-width:760px){.moves{grid-template-columns:1fr}}
+  .move{border:1px solid var(--line);border-radius:12px;background:var(--paper-2);padding:17px}
+  .move .mk{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--orange);letter-spacing:.04em}
+  .move h4{font-size:15.5px;margin:9px 0 7px}
+  .move p{font-size:13px;color:var(--muted)}
+  .move .res{margin-top:9px;font-family:var(--mono);font-size:11px;color:var(--blue)}
+
+  .note{border-left:3px solid var(--orange);background:var(--orange-soft);border-radius:0 12px 12px 0;padding:14px 18px;font-size:13.5px;color:var(--ink-2);margin-top:26px}
+  .note b{color:var(--orange)}
+  footer{border-top:1px solid var(--line);padding:30px 0 54px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
+  footer .mono{font-size:11px;color:var(--faint)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="eyebrow">Council session · read-out</span>
+    <h1>Luxury Chauffeur App — Home screen</h1>
+    <p class="goal"><b style="color:#fff">Goal under review:</b> route a UAE resident into a chauffeur booking from the top-of-funnel Home screen. Reviewed from a screenshot only — the four lenses worked from a written inventory of what ships today.</p>
+    <div class="meta-strip">
+      <span class="pill"><span class="o">◆</span> 4 lenses</span>
+      <span class="pill"><b>27</b> agents ran</span>
+      <span class="pill">1 critique dropped <span style="color:#7A828F">(network)</span></span>
+      <span class="pill">~358k tokens · 9m53s</span>
+    </div>
+    <div class="funnel"><b>22</b> findings raised <span class="ar">→</span> <b>18</b> survived critique <span class="ar">→</span> <b class="o">6</b> shortlisted by ICE</div>
+  </div>
+</header>
+
+<!-- ALL VIEWS -->
+<section class="wrap">
+  <div class="shead">
+    <span class="eyebrow">Every lens's view</span>
+    <h2>What each of the four agents saw</h2>
+    <p>They ran in parallel, blind to each other. Each was told to ground findings in the real screen and not manufacture problems. Here is the raw output — 22 findings, before any filtering.</p>
+  </div>
+  <div class="lensgrid">
+
+    <div class="lens" style="--c:var(--orange)">
+      <div class="lh"><span class="dot"></span><h3>Conversion</h3><span class="role">friction</span><span class="cnt">5 findings</span></div>
+      <div class="fitem"><span class="sev crit">Crit</span><div><div class="ft">Two primary featured cards hide their price</div><div class="fo">Pay-Per-Minute & Hourly show no price, yet the smaller cards below show AED 59 / 69 — the app prices its errands but not its headline products.</div></div></div>
+      <div class="fitem"><span class="sev major">Maj</span><div><div class="ft">'Where to?' competes with the cards & hides all modes</div><div class="fo">Two entry paradigms at once; flagship products are time-based, so a destination prompt carries the wrong scent.</div></div></div>
+      <div class="fitem"><span class="sev major">Maj</span><div><div class="ft">Promo banner ships visibly broken</div><div class="fo">Clipped heading, mid-carousel start, bare ↗ CTA — on a brand selling polish.</div></div></div>
+      <div class="fitem killed"><span class="tag-kill">✕ killed</span><div><div class="ft">'Add your car' is front-loaded above the booking path</div><div class="fo">Argued down in critique — see the cross-examination below.</div></div></div>
+      <div class="fitem"><span class="sev minor">Min</span><div><div class="ft">Icon-only actions carry no labels at commit points</div><div class="fo">'+', '↗' and the mode chevron make the user decode before acting.</div></div></div>
+    </div>
+
+    <div class="lens" style="--c:var(--blue)">
+      <div class="lh"><span class="dot"></span><h3>Usability</h3><span class="role">heuristics</span><span class="cnt">6 findings</span></div>
+      <div class="fitem"><span class="sev crit">Crit</span><div><div class="ft">Inconsistent price disclosure on the primary funnel</div><div class="fo">The same card component communicates price three different ways; the highest-emphasis cards are the ones hiding it.</div></div></div>
+      <div class="fitem"><span class="sev major">Maj</span><div><div class="ft">Promo heading & subtitle clipped ('Chauffeu…')</div><div class="fo">Truncated mid-word — an overflow bug, not ellipsis, on the largest banner.</div></div></div>
+      <div class="fitem"><span class="sev major">Maj</span><div><div class="ft">Carousels give no position feedback</div><div class="fo">Promo opens mid-sequence; a clipped card is the only hint more exists. Visibility of system status.</div></div></div>
+      <div class="fitem"><span class="sev major">Maj</span><div><div class="ft">Icon-only '+' and '↗' carry no text label</div><div class="fo">Neither states what a tap does; ↗ conventionally implies 'leave the app'.</div></div></div>
+      <div class="fitem"><span class="sev major">Maj</span><div><div class="ft">Mode dropdown ↔ 'Where to?' ↔ cards is undefined</div><div class="fo">Two overlapping booking entry points with no feedback on what changing mode does.</div></div></div>
+      <div class="fitem"><span class="sev minor">Min</span><div><div class="ft">No current/detected location for a location service</div><div class="fo">Empty 'Where to?' forces typed recall instead of one-tap pickup.</div></div></div>
+    </div>
+
+    <div class="lens" style="--c:var(--teal)">
+      <div class="lh"><span class="dot"></span><h3>Accessibility</h3><span class="role">wcag 2.2 aa</span><span class="cnt">6 findings</span></div>
+      <div class="fitem"><span class="sev crit">Crit</span><div><div class="ft">Icon-only buttons expose no accessible name</div><div class="fo">A screen-reader user hears 'button' three times; the only car-add & promo CTAs are anonymous. WCAG 4.1.2.</div></div></div>
+      <div class="fitem"><span class="sev major">Maj</span><div><div class="ft">'Where to?' uses placeholder as its only label</div><div class="fo">Placeholder isn't a programmatic label and vanishes on focus — on the top-of-funnel control. WCAG 3.3.2.</div></div></div>
+      <div class="fitem"><span class="sev major">Maj</span><div><div class="ft">Promo text clipped — reflow / resize failure</div><div class="fo">Content lost; worsens at large Dynamic Type. WCAG 1.4.10 / 1.4.4.</div></div></div>
+      <div class="fitem"><span class="sev major">Maj</span><div><div class="ft">Grey subtitle & placeholder likely below 4.5:1</div><div class="fo">Classic under-contrast pairings; punishing in UAE outdoor sun. WCAG 1.4.3.</div></div></div>
+      <div class="fitem"><span class="sev minor">Min</span><div><div class="ft">Active tab may rely on color alone</div><div class="fo">Needs a programmatic 'selected' state, not just a blue tint. WCAG 4.1.2 / 1.4.1.</div></div></div>
+      <div class="fitem"><span class="sev minor">Min</span><div><div class="ft">Small targets & gesture-only carousels</div><div class="fo">Risks the 24px minimum; switch/keyboard users can't operate swipe rows. WCAG 2.5.8 / 2.1.1.</div></div></div>
+    </div>
+
+    <div class="lens" style="--c:var(--indigo)">
+      <div class="lh"><span class="dot"></span><h3>Trust &amp; persuasion</h3><span class="role">risk moments</span><span class="cnt">5 findings</span></div>
+      <div class="fitem"><span class="sev crit">Crit</span><div><div class="ft">Zero social proof; the drivers are literally faceless</div><div class="fo">No rating, trip count, or 'vetted/RTA-licensed' — and blank placeholder faces on a service where a stranger drives you.</div></div></div>
+      <div class="fitem"><span class="sev crit">Crit</span><div><div class="ft">Hero services are the only cards with no price</div><div class="fo">Ambiguity aversion: a cheaper adjacent item shows its price and the premium one hides it — reads as concealment.</div></div></div>
+      <div class="fitem"><span class="sev major">Maj</span><div><div class="ft">'Pay Per Minute' is an uncapped meter</div><div class="fo">No rate, estimate, or cap — the taxi-in-traffic dread. Uncertainty about the maximum is what stalls the tap.</div></div></div>
+      <div class="fitem"><span class="sev major">Maj</span><div><div class="ft">Highest-commitment products carry no anchor</div><div class="fo">Monthly & Full-Time — the biggest financial commitments — have no 'from' figure at the commitment moment.</div></div></div>
+      <div class="fitem"><span class="sev major">Maj</span><div><div class="ft">Text-clipping undermines a polish-is-product brand</div><div class="fo">Users infer service reliability from interface craft; a clipped hero discounts every trust claim.</div></div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CROSS-EXAMINATION -->
+<section style="background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="shead">
+      <span class="eyebrow" style="color:var(--orange)">The argument</span>
+      <h2>How the agents cross-examined each other</h2>
+      <p>Every finding was handed to an adversarial critic told to <em>refute</em> it, ground the verdict in a real case study, and score it. Findings didn't reach the redesign on vibes — they survived, got narrowed, or died. The most interesting is where two lenses reach opposite conclusions about the same pixel.</p>
+    </div>
+
+    <div class="deb">
+
+      <!-- CONFLICT -->
+      <div class="card">
+        <div class="ch">
+          <span class="verdict conflict">◆ Lenses disagree</span>
+          <span class="claim">Should the '+' button be labelled? Two agents, opposite verdicts.</span>
+        </div>
+        <div class="cb">
+          <div class="arg attack"><span class="who">Usability critic</span><span class="tx">“Overreach — you bundled three controls, two already conventionally labelled. The '+' sits <em>beside</em> 'Add your car' text; the mode dropdown shows 'Personal Chauffeur' with a chevron, the standard iOS pull-down. Only the promo ↗ is a genuine ambiguity.” <span class="mono" style="color:var(--muted)">→ survives, reduced · ICE 270</span></span></div>
+          <div class="arg defend"><span class="who">Accessibility</span><span class="tx">“Proximity doesn't help VoiceOver. The '+' exposes <em>no programmatic accessible name</em> — the screen-reader user just hears ‘button’. The fix is essentially free and lands on the two primary CTAs.” <span class="mono" style="color:var(--muted)">→ survives · ICE 486 · ranked #1</span></span></div>
+          <div class="arg result"><span class="who">Reconciled</span><span class="tx">Both kept. The synthesis merges them: a <em>visible</em> word for sighted users <em>and</em> an <em>accessibilityLabel</em> for AT. Same button, two layers — neither critic was wrong.</span></div>
+          <div class="cs"><b>Case studies cited</b>NN/g <i>Icon Usability</i> (icon+adjacent-text is acceptable) · WebAIM Million 2024 (empty buttons on ~28% of home pages) · WCAG 4.1.2 Name, Role, Value.</div>
+        </div>
+      </div>
+
+      <!-- KILLED -->
+      <div class="card">
+        <div class="ch">
+          <span class="verdict kill">✕ Killed</span>
+          <span class="claim">“Demote 'Add your car' below the booking path.”</span>
+          <span class="ice">Conversion · <b>rejected 4·3·8</b></span>
+        </div>
+        <div class="cb">
+          <div class="arg attack"><span class="who">Critic</span><span class="tx">“The finding <em>misreads the business model</em>. This isn't an Uber ‘book any driver’ app — the mode is <em>Personal Chauffeur</em>, and the service mix (Garage Pick & Drop, RTA Inspection, Monthly) is car-owner-centric. The chauffeur likely drives the user's <em>own</em> car — so ‘Add your car’ is a legitimate first action, and demoting it could break the primary flow.”</span></div>
+          <div class="arg result"><span class="who">Outcome</span><span class="tx">Confidence collapses to <em>3/10</em>. The demote proposal dies; only the residual ‘label the +’ nugget survives — and that gets folded into the #1 accessibility fix above. <em>The one finding an agent talked the council out of.</em></span></div>
+          <div class="cs"><b>Case study cited</b>NN/g <i>Icon Usability</i> — <i>refutes</i> the finding: the '+' is contextually labelled by the card's own copy, so the demote rests on a misread of what the app does.</div>
+        </div>
+      </div>
+
+      <!-- SURVIVES: price -->
+      <div class="card">
+        <div class="ch">
+          <span class="verdict surv">✓ Survives</span>
+          <span class="claim">“The two featured cards hide their price.”</span>
+          <span class="ice">3 lenses raised it · <b>ICE 343</b></span>
+        </div>
+        <div class="cb">
+          <div class="arg attack"><span class="who">Critic</span><span class="tx">“Pay-Per-Minute & Hourly are <em>genuinely</em> variable — a single number could understate the total or look scary. And price-hiding can be a deliberate <em>luxury</em> tactic.”</span></div>
+          <div class="arg defend"><span class="who">Rebuttal</span><span class="tx">“Survives. The ‘from AED’ framing is the standard hedge for variable pricing, and the inconsistency argument is independent: the app already prices its <em>errand</em> services, so silence on the headline products reads as evasive, not premium — especially when the category leader Careem shows estimates.”</span></div>
+          <div class="cs"><b>Case study cited</b>Baymard Institute — “extra cost too high” is the #1 checkout-abandonment reason (~48%). Uber/Careem both show an upfront per-tier estimate under surge — an established, expected pattern.</div>
+        </div>
+      </div>
+
+      <!-- NARROWED: carousel -->
+      <div class="card">
+        <div class="ch">
+          <span class="verdict narrow">◑ Narrowed</span>
+          <span class="claim">“Carousel has no scroll cue and opens mid-sequence.”</span>
+          <span class="ice">Usability · <b>trimmed, kept</b></span>
+        </div>
+        <div class="cb">
+          <div class="arg attack"><span class="who">Critic</span><span class="tx">“Half-wrong. A partial next-card <em>peek is the recommended swipe affordance</em>, not an accidental clip — so ‘no cue exists’ is false, and ‘always start on card 1’ is a preference.”</span></div>
+          <div class="arg defend"><span class="who">Kept core</span><span class="tx">“Two things remain objectively broken regardless of the peek debate: the heading truncated <em>mid-word</em> (‘Chauffeu’), and the carousel opening deep in the sequence with a half-rendered title. Drop ‘start on card 1’; keep the overflow fix.”</span></div>
+          <div class="cs"><b>Case study cited</b>Baymard — a partial sliver is the strongest swipeability cue; pagination dots alone are too subtle. NN/g — carousels are low-engagement overall (don't over-invest).</div>
+        </div>
+      </div>
+
+      <!-- NARROWED: where to competes -->
+      <div class="card">
+        <div class="ch">
+          <span class="verdict narrow">◑ Reframed</span>
+          <span class="claim">“The 'Where to?' bar competes with the service cards.”</span>
+          <span class="ice">Conversion · <b>ICE 210</b></span>
+        </div>
+        <div class="cb">
+          <div class="arg attack"><span class="who">Critic</span><span class="tx">“The search-bar + mode-selector + tiles layout is the <em>canonical super-app pattern</em> (Careem, Uber) — users are habituated to it, so ‘competes’ is refuted.”</span></div>
+          <div class="arg defend"><span class="who">Reframed</span><span class="tx">“What survives is narrower: in Careem/Uber the flagship product <em>is</em> a destination ride, so ‘Where to?’ matches. Here the flagships are <em>time-based</em>, so the same prompt carries false information scent. Fix the copy, not the layout.”</span></div>
+          <div class="cs"><b>Case study cited</b>Pirolli & Card information-foraging (scent) — entry labels mismatched to their destinations reduce task completion.</div>
+        </div>
+      </div>
+
+      <!-- WEAKENED: mode dropdown -->
+      <div class="card">
+        <div class="ch">
+          <span class="verdict narrow">◑ Weakened</span>
+          <span class="claim">“Selecting a mode produces no visible state change.”</span>
+          <span class="ice">Usability · <b>ICE 150 · lowest survivor</b></span>
+        </div>
+        <div class="cb">
+          <div class="arg attack"><span class="who">Critic</span><span class="tx">“You can't know that from a <em>static screenshot</em> — you never saw the interaction, so the ‘no feedback’ premise is unverifiable. And Uber/Careem ship both entries fine.”</span></div>
+          <div class="arg defend"><span class="who">Residual</span><span class="tx">“The defensible core: the selected mode isn't echoed where booking begins. Real, but low-severity polish — scored down, not out.”</span></div>
+          <div class="cs"><b>Case study cited</b>NN/g Heuristic #1, Visibility of System Status.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONSENSUS -->
+<section class="wrap">
+  <div class="shead">
+    <span class="eyebrow">Where they agreed independently</span>
+    <h2>The strongest signal: convergence</h2>
+    <p>Three issues were flagged by multiple blind lenses without coordinating. Independent agreement is the council's highest-confidence output.</p>
+  </div>
+  <div class="cons">
+    <div class="cbox">
+      <div class="n">Flagged by 4 / 4</div>
+      <h4>Promo text clipped mid-word</h4>
+      <div class="lenses-hit"><span class="lchip" style="--c:var(--orange)">Conversion</span><span class="lchip" style="--c:var(--blue)">Usability</span><span class="lchip" style="--c:var(--teal)">Accessibility</span><span class="lchip" style="--c:var(--indigo)">Trust</span></div>
+      <p>Everyone saw it, for different reasons — overflow bug, reflow failure, and a credibility leak on a luxury brand.</p>
+    </div>
+    <div class="cbox">
+      <div class="n">Flagged by 3 / 4</div>
+      <h4>Featured cards hide their price</h4>
+      <div class="lenses-hit"><span class="lchip" style="--c:var(--orange)">Conversion</span><span class="lchip" style="--c:var(--blue)">Usability</span><span class="lchip" style="--c:var(--indigo)">Trust</span></div>
+      <p>Conversion called it a leak, usability an inconsistency, trust a signal of concealment. Same pixel, three lenses.</p>
+    </div>
+    <div class="cbox">
+      <div class="n">Flagged by 3 / 4</div>
+      <h4>Icon-only controls, no labels</h4>
+      <div class="lenses-hit"><span class="lchip" style="--c:var(--orange)">Conversion</span><span class="lchip" style="--c:var(--blue)">Usability</span><span class="lchip" style="--c:var(--teal)">Accessibility</span></div>
+      <p>...and yet they disagreed on <em>how</em> broken it is — the conflict resolved in the cross-examination above.</p>
+    </div>
+  </div>
+</section>
+
+<!-- VERDICT -->
+<section style="background:var(--paper-2);border-top:1px solid var(--line)">
+  <div class="wrap">
+    <div class="shead">
+      <span class="eyebrow" style="color:var(--orange)">Converge hard</span>
+      <h2>The verdict — top 6, and the redesign</h2>
+      <p>Survivors ranked by Impact × Confidence × Ease, then synthesized into one coherent screen. This is what the whole debate was for.</p>
+    </div>
+
+    <div class="verd">
+      <table class="vtable">
+        <thead><tr><th>#</th><th>Finding</th><th>Lens</th><th>ICE</th><th>Effort</th></tr></thead>
+        <tbody>
+          <tr><td class="rank">01</td><td>Icon-only controls have no accessible name — add labels + a11y names</td><td class="lz" style="--c:var(--teal)">A11y</td><td class="iceval">486</td><td class="eff">S</td></tr>
+          <tr><td class="rank">02</td><td>No social proof / faceless drivers — add a verified trust line + human imagery</td><td class="lz" style="--c:var(--indigo)">Trust</td><td class="iceval">448</td><td class="eff">M</td></tr>
+          <tr><td class="rank">03</td><td>Promo heading clipped mid-word — constrain container, wrap in viewport</td><td class="lz" style="--c:var(--blue)">Usab.</td><td class="iceval">432</td><td class="eff">S</td></tr>
+          <tr><td class="rank">04</td><td>Promo ships broken (bare ↗, deep-sequence start) — label CTA, safe-area fit</td><td class="lz" style="--c:var(--orange)">Conv.</td><td class="iceval">384</td><td class="eff">S</td></tr>
+          <tr><td class="rank">05</td><td>Featured & Monthly cards hide price — add 'from AED' anchors</td><td class="lz" style="--c:var(--orange)">Conv.</td><td class="iceval">343</td><td class="eff">M</td></tr>
+          <tr><td class="rank">06</td><td>'Pay Per Minute' uncapped meter — add rate + trip estimate + reassurance</td><td class="lz" style="--c:var(--indigo)">Trust</td><td class="iceval">336</td><td class="eff">M</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="wirewrap">
+      <div class="wbar">synthesis · current vs proposed — Home screen</div>
+      <pre>
+CURRENT (ships today)                          PROPOSED
+┌──────────────────────────────┐              ┌──────────────────────────────┐
+│ [car] Add your car      (+)   │◀ '+' no      │ <span class="add">4.9★ · 12,400 trips · RTA-</span>    │◀ NEW trust line
+│       And start...            │  a11y name   │ <span class="add">licensed, vetted chauffeurs</span>   │
+├──────────────────────────────┤              ├──────────────────────────────┤
+│ 🔍 Where to?  Personal ⌄      │◀ chevron     │ [car] Add your car  <span class="add">(+ Add)</span>   │◀ label on '+'
+├──────────────────────────────┤  unlabeled   │ 🔍 Where to?  <span class="add">[Mode: Personal ⌄]</span>│◀ combobox
+│ Featured services            │              ├──────────────────────────────┤
+│ ┌────────┐ ┌────────┐         │◀ faceless    │ ┌────────┐ ┌────────┐         │
+│ │(face▯) │ │(face▯) │         │  drivers     │ │<span class="add">(real dr)</span>│ │<span class="add">(real dr)</span>│         │◀ human imagery
+│ │Pay/Min │ │Hourly  │         │              │ │Pay/Min │ │Hourly  │         │
+│ │NO price│ │NO price│         │◀ primary     │ │<span class="add">from AED│ │from AED</span>│         │◀ price anchors
+│ └────────┘ └────────┘         │  cards hide  │ │<span class="add">3/min   │ │49/hr</span>   │         │
+│ ┌───┐┌───┐┌───┐               │  price       │ │<span class="add">~AED45  │</span> │        │         │◀ estimate +
+│ │59 ││69 ││31 │▐clip          │◀ Monthly     │ │<span class="add">/20min  │</span> │        │         │  reassurance
+│ └───┘└───┘└───┘▐              │  unpriced    │ └────────┘ └────────┘         │
+│ ┌──────────────────────────┐ │◀ heading     │ ┌───┐┌───┐┌────┐              │
+│ │[PH] Luxury Chauffeu       │ │  CLIPPED     │ │59 ││69 ││<span class="add">499</span>│⇢ swipe      │◀ Monthly priced
+│ │ Get a full-time dedic..   │ │  mid-word    │ └───┘└───┘└────┘              │
+│ │                    (↗)    │ │◀ bare ↗,     │ ┌──────────────────────────┐ │
+│ │ur,   onal ◀peek           │ │  mid-carousel│ │[PH] <span class="add">Luxury Chauffeur</span>     │ │◀ full text wraps
+│ └──────────────────────────┘ │              │ │ <span class="add">Full-Time</span>                │ │
+├──────────────────────────────┤              │ │ [<span class="add">See plans ↗</span>]            │ │◀ labeled CTA
+│ [Home] Services Cars Acct    │              │ └──────────────────────────┘ │
+└──────────────────────────────┘              └──────────────────────────────┘</pre>
+    </div>
+
+    <div class="moves">
+      <div class="move"><div class="mk">MOVE A</div><h4>Name every hand</h4><p>Explicit accessible names on all three glyph controls; a visible word on the two that matter (<span class="mono">+ Add</span>, <span class="mono">See plans ↗</span>); promote the mode selector to a labelled combobox.</p><div class="res">→ resolves #1 + the CTA half of #4</div></div>
+      <div class="move"><div class="mk">MOVE B</div><h4>Price the browse</h4><p>‘from AED’ anchors on both featured cards and Monthly, reusing the proven blue badge. For the meter: pair the rate with a plain estimate and one honest control line (‘Paused in traffic’).</p><div class="res">→ resolves #5, #6</div></div>
+      <div class="move"><div class="mk">MOVE C</div><h4>Prove it's safe, show a face</h4><p>One verifiable trust line at the top (<span class="mono">4.9★ · 12,400 trips · RTA-licensed</span>) and real driver imagery. One line, not a wall — Baymard: 1–3 signals beat zero; 7+ backfire.</p><div class="res">→ resolves #2</div></div>
+      <div class="move"><div class="mk">MOVE D</div><h4>Fix the broken hero</h4><p>Constrain the promo text to the safe area so it wraps instead of clipping; test against Dynamic Type. Keep the peek affordance; don't open mid-sequence with a half-rendered title.</p><div class="res">→ resolves #3 + the layout half of #4</div></div>
+    </div>
+
+    <div class="note"><b>Sequencing (from the council):</b> #1, #3, #4 are all Small effort and share the promo/labelling surface — ship them as one fast pass (highest ICE, lowest cost). #2, #5, #6 are the medium-effort trust-and-price layer that moves the booking-start metric; #5 and #6 share the featured-card component, so build them together.</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="mono">UX Council · session read-out · chauffeur app Home</span>
+    <span class="mono">22 raised → 18 survived → 6 shipped · diverge wide, converge hard</span>
+  </div>
+</footer>
+
+</body>
+</html>
