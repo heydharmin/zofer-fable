@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the UX Council works</title>
+<style>
+  :root{
+    --bg:#F5F6F9; --card:#fff; --ink:#12151A; --ink2:#39414E; --muted:#69707E; --faint:#98A0AD;
+    --line:#DFE3EA; --blue:#2456E0; --blue-soft:#E9EFFF; --teal:#0E9C9C; --indigo:#5B62E8; --slate:#5A6478;
+    --orange:#FF6A00; --orange-soft:#FFF1E7; --good:#1EA34B; --good-soft:#E9F6EE; --crit:#C92A2A; --crit-soft:#FBEBEB;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:
+    radial-gradient(1000px 500px at 50% -5%, #fff, transparent), var(--bg);
+    color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:920px;margin:0 auto;padding:40px 24px 70px}
+  .head{text-align:center;margin-bottom:30px}
+  .head .ey{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)}
+  .head h1{margin:12px 0 6px;font-size:30px;font-weight:800;letter-spacing:-.03em}
+  .head p{margin:0;color:var(--muted);font-size:14.5px}
+  .head p b{color:var(--ink)}
+
+  .flow{display:flex;flex-direction:column;align-items:center;gap:0}
+  .stagewrap{width:100%;display:flex;flex-direction:column;align-items:center}
+  .conn{width:2px;height:26px;background:linear-gradient(var(--faint),var(--line));position:relative}
+  .conn::after{content:"";position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--faint)}
+
+  .stage{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:0 18px 40px -32px rgba(20,30,60,.4);position:relative}
+  .stage .badge{position:absolute;top:-13px;left:22px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.05em;color:#fff;background:var(--blue);border-radius:7px;padding:4px 10px}
+  .stage.out .badge{background:var(--orange)}
+  .stage h3{margin:6px 0 4px;font-size:17px;font-weight:800;letter-spacing:-.01em}
+  .stage p{margin:0;font-size:13px;color:var(--muted)}
+  .stage .tag{font-family:var(--mono);font-size:10px;color:var(--faint);position:absolute;top:16px;right:18px;letter-spacing:.05em}
+
+  /* width shows converge: widest at diverge, narrowing down */
+  .w-frame{width:420px;text-align:center}
+  .w-diverge{width:100%;max-width:860px}
+  .w-crit{width:640px}
+  .w-score{width:500px}
+  .w-synth{width:420px;text-align:center}
+  @media(max-width:720px){.w-frame,.w-crit,.w-score,.w-synth{width:100%}}
+
+  .lensgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:12px}
+  @media(max-width:720px){.lensgrid{grid-template-columns:repeat(3,1fr)}}
+  .lens{border:1px solid var(--line);border-radius:10px;padding:9px 6px;text-align:center;font-size:11px;font-weight:600;color:var(--ink2);position:relative;overflow:hidden}
+  .lens::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c)}
+  .lens .em{font-size:15px;display:block;margin-bottom:3px}
+
+  .fanhint{font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:11px;text-align:center;letter-spacing:.03em}
+
+  /* critique inner */
+  .critrow{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap}
+  .critcard{flex:1;min-width:180px;border:1px solid var(--line);border-radius:11px;padding:12px}
+  .critcard .k{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:6px}
+  .critcard.att .k{color:var(--crit)} .critcard.ev .k{color:var(--blue)} .critcard.sc .k{color:var(--good)}
+  .critcard p{margin:0;font-size:11.5px;color:var(--ink2);line-height:1.45}
+  .verdicts{display:flex;gap:7px;margin-top:12px;justify-content:center;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px}
+  .vd{border-radius:6px;padding:4px 10px;font-weight:700}
+  .vd.s{background:var(--good-soft);color:var(--good)} .vd.n{background:var(--blue-soft);color:var(--blue)} .vd.k{background:var(--crit-soft);color:var(--crit)}
+
+  .ice{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;font-family:var(--mono);font-size:15px;font-weight:800;letter-spacing:-.01em}
+  .ice .op{color:var(--faint);font-weight:400}
+  .ice .r{color:var(--orange)}
+  .icekeys{display:flex;justify-content:center;gap:14px;margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--muted)}
+
+  .synth h3{color:var(--orange)}
+  .synth .pills{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+  .synth .pill{font-family:var(--mono);font-size:10px;font-weight:700;background:var(--orange-soft);color:var(--orange);border-radius:6px;padding:4px 9px}
+
+  /* converge visual bar */
+  .converge{display:flex;flex-direction:column;align-items:center;gap:3px;margin:2px 0}
+  .converge .b{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--orange))}
+
+  .banner{margin-top:34px;background:var(--ink);color:#fff;border-radius:16px;padding:20px 24px;text-align:center}
+  .banner b{color:#fff}.banner .big{font-size:19px;font-weight:800;letter-spacing:-.02em}
+  .banner .nums{font-family:var(--mono);font-size:13px;color:#AEB6C6;margin-top:10px}
+  .banner .nums b{color:var(--orange)}
+
+  .sidekey{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:18px;font-size:11.5px;color:var(--muted)}
+  .sidekey span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="ey">The method</div>
+    <h1>How the UX Council works</h1>
+    <p><b>Diverge wide, converge hard.</b> Many specialists generate; ruthless filtering decides.</p>
+  </div>
+
+  <div class="flow">
+
+    <!-- 1 FRAME -->
+    <div class="stagewrap">
+      <div class="stage w-frame">
+        <span class="badge">PHASE 1</span><span class="tag">1 agent</span>
+        <h3>Frame</h3>
+        <p>Read the real screen → goal, user, and exactly what ships today. No imagined UI.</p>
+      </div>
+    </div>
+    <div class="conn"></div>
+
+    <!-- 2 DIVERGE -->
+    <div class="stagewrap">
+      <div class="stage w-diverge">
+        <span class="badge">PHASE 2 · DIVERGE</span><span class="tag">up to 10 agents ∥</span>
+        <h3>Specialist lenses, in parallel — blind to each other</h3>
+        <div class="lensgrid">
+          <div class="lens" style="--c:var(--orange)"><span class="em">🎯</span>Conversion</div>
+          <div class="lens" style="--c:var(--blue)"><span class="em">🧭</span>Usability</div>
+          <div class="lens" style="--c:var(--teal)"><span class="em">♿</span>Accessibility</div>
+          <div class="lens" style="--c:var(--indigo)"><span class="em">🤝</span>Trust</div>
+          <div class="lens" style="--c:var(--slate)"><span class="em">🗂</span>Info arch</div>
+          <div class="lens" style="--c:var(--orange)"><span class="em">✍️</span>UX writing</div>
+          <div class="lens" style="--c:var(--blue)"><span class="em">🎨</span>Visual</div>
+          <div class="lens" style="--c:var(--teal)"><span class="em">🏁</span>Competitor A</div>
+          <div class="lens" style="--c:var(--indigo)"><span class="em">🏁</span>Competitor B</div>
+          <div class="lens" style="--c:var(--slate)"><span class="em">📈</span>Growth</div>
+        </div>
+        <div class="fanhint">each returns 3–6 grounded findings → 20-50 raw findings</div>
+      </div>
+    </div>
+    <div class="conn"></div>
+
+    <!-- 3 CRITIQUE -->
+    <div class="stagewrap">
+      <div class="stage w-crit">
+        <span class="badge">PHASE 3 · GROUND &amp; CRITIQUE</span><span class="tag">1 skeptic / finding</span>
+        <h3>Every finding is attacked</h3>
+        <div class="critrow">
+          <div class="critcard att"><div class="k">✕ Refute</div><p>A skeptic tries to prove the finding wrong or a mere preference.</p></div>
+          <div class="critcard ev"><div class="k">◆ Ground</div><p>Must cite a real case study / competitor — or say &ldquo;none found.&rdquo; Never a fake stat.</p></div>
+          <div class="critcard sc"><div class="k">✓ Verdict</div><p>Survives, gets narrowed, or is killed. Then scored.</p></div>
+        </div>
+        <div class="verdicts"><span class="vd s">✓ survives</span><span class="vd n">◑ narrowed</span><span class="vd k">✕ killed</span></div>
+      </div>
+    </div>
+    <div class="conn"></div>
+
+    <!-- 4 SCORE -->
+    <div class="stagewrap">
+      <div class="stage w-score">
+        <span class="badge">PHASE 4 · SCORE</span><span class="tag">deterministic</span>
+        <h3>Rank the survivors</h3>
+        <div class="ice"><span>ICE</span><span class="op">=</span>Impact<span class="op">×</span>Confidence<span class="op">×</span>Ease<span class="op">→</span><span class="r">shortlist</span></div>
+        <div class="icekeys"><span>1–1000</span><span>·</span><span>agents judge, ranking doesn't get a vote</span></div>
+      </div>
+    </div>
+
+    <!-- converge visual -->
+    <div class="converge">
+      <div class="b" style="width:360px"></div>
+      <div class="b" style="width:260px"></div>
+      <div class="b" style="width:160px"></div>
+      <div class="b" style="width:80px"></div>
+    </div>
+
+    <!-- 5 SYNTHESIZE -->
+    <div class="stagewrap">
+      <div class="stage out synth w-synth">
+        <span class="badge">PHASE 5</span>
+        <h3>Synthesize</h3>
+        <p>The winners become one coherent redesign.</p>
+        <div class="pills"><span class="pill">wireframe</span><span class="pill">design moves</span><span class="pill">backlog</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="banner">
+    <div class="big">Diverge wide → converge hard</div>
+    <div class="nums">A typical run: <b>22</b> findings raised → <b>18</b> survive critique → <b>6</b> shipped</div>
+  </div>
+
+  <div class="sidekey">
+    <span><span class="sw" style="background:var(--blue)"></span>Analysis (the lenses &amp; scoring)</span>
+    <span><span class="sw" style="background:var(--orange)"></span>Output (the redesign)</span>
+    <span><span class="sw" style="background:var(--crit)"></span>Adversarial (kills weak findings)</span>
+  </div>
+</div>
+</body>
+</html>
