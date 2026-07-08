@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chauffeur App — Low-Fidelity Wireframes</title>
+<style>
+  :root{
+    --ink:#1c1f24; --g1:#3a3f47; --g2:#6b7280; --g3:#9aa1ac; --g4:#c7ccd4; --g5:#e4e7ec; --g6:#eef0f3;
+    --paper:#fbfbfc; --acc:#2456E0; --acc-soft:#E9EFFF; --line:#333842;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  .head{text-align:center;padding:40px 24px 6px}
+  .head .ey{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--g2)}
+  .head h1{margin:12px 0 8px;font-size:27px;font-weight:800;letter-spacing:-.02em}
+  .head p{margin:0 auto;color:var(--g2);font-size:14px;max-width:60ch}
+  .head .lofi{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:10.5px;color:var(--g2);border:1px solid var(--g4);border-radius:6px;padding:4px 10px}
+
+  .sheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:26px;padding:34px 0 60px}
+  .cell{background:#fff;border:1px solid var(--g5);border-radius:14px;padding:18px;display:flex;flex-direction:column;align-items:center}
+  .cell .cap{align-self:flex-start;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--ink);margin-bottom:2px}
+  .cell .sub{align-self:flex-start;font-size:11.5px;color:var(--g2);margin-bottom:14px}
+
+  /* phone */
+  .wf{width:250px;border:2px solid var(--line);border-radius:26px;padding:9px;background:#fff;position:relative;flex:none}
+  .scr{border:1px solid var(--g4);border-radius:18px;overflow:hidden}
+  .sb{display:flex;justify-content:space-between;padding:8px 14px 4px;font-family:var(--mono);font-size:9px;color:var(--g2)}
+  .bd{padding:8px 12px 14px}
+
+  /* wireframe primitives */
+  .t-lg{font-size:14px;font-weight:800;letter-spacing:-.01em;margin:3px 0}
+  .t-sm{font-size:10px;color:var(--g2)}
+  .txt{height:7px;background:var(--g5);border-radius:3px;margin:5px 0}
+  .txt.d{background:var(--g4)}
+  .w80{width:80%}.w60{width:60%}.w40{width:40%}.w50{width:50%}
+  .ph{border:1px solid var(--g4);border-radius:8px;background:
+      linear-gradient(45deg,transparent 47%,var(--g4) 47%,var(--g4) 53%,transparent 53%),
+      linear-gradient(-45deg,transparent 47%,var(--g4) 47%,var(--g4) 53%,transparent 53%);
+      background-color:var(--g6)}
+  .box{border:1px solid var(--g3);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:10px;color:var(--g2);display:flex;align-items:center;gap:7px}
+  .box .lab{color:var(--g1);font-weight:600}
+  .btn{border:1.5px solid var(--ink);border-radius:8px;text-align:center;padding:8px;font-size:10.5px;font-weight:700;margin-top:7px}
+  .btn.fill{background:var(--ink);color:#fff}
+  .btn.ghost{border-color:var(--g3);color:var(--g2);font-weight:600}
+  .radio{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--g3);flex:none}
+  .radio.on{border-color:var(--ink);background:radial-gradient(circle,var(--ink) 0 42%,transparent 46%)}
+  .opt{border:1.5px solid var(--g4);border-radius:9px;padding:9px;margin:6px 0;display:flex;gap:8px;align-items:flex-start}
+  .opt.sel{border-color:var(--ink)}
+  .av{width:30px;height:30px;border-radius:50%;flex:none;border:1px solid var(--g4);background:
+      linear-gradient(45deg,transparent 46%,var(--g4) 46%,var(--g4) 54%,transparent 54%),
+      linear-gradient(-45deg,transparent 46%,var(--g4) 46%,var(--g4) 54%,transparent 54%);
+      background-color:var(--g6)}
+  .av.sq{border-radius:8px}
+  .chiprow{display:flex;gap:5px;overflow:hidden;margin:6px 0}
+  .chip{border:1px solid var(--g4);border-radius:999px;padding:3px 8px;font-size:9px;color:var(--g2);flex:none}
+  .chip.on{border-color:var(--ink);color:var(--ink);font-weight:700}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+  .card{border:1px solid var(--g4);border-radius:8px;padding:8px}
+  .card.hi{border-color:var(--ink);border-width:1.5px}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:6px}
+  .price{font-size:10px;font-weight:800}
+  .toggle{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:6px 0}
+  .toggle div{border:1px solid var(--g4);border-radius:7px;padding:6px;text-align:center;font-size:9px;color:var(--g2)}
+  .toggle div.on{border-color:var(--ink);color:var(--ink);font-weight:700}
+  .tag{display:inline-block;border:1px solid var(--g4);border-radius:5px;padding:2px 6px;font-size:8.5px;color:var(--g2)}
+  .stars{letter-spacing:3px;font-size:15px;color:var(--g3);text-align:center;margin:6px 0}
+
+  /* annotation pins + list */
+  .pin{position:absolute;width:19px;height:19px;border-radius:50%;background:var(--acc);color:#fff;font-family:var(--mono);font-size:10px;font-weight:700;display:grid;place-items:center;z-index:5;border:2px solid #fff;box-shadow:0 2px 5px rgba(36,86,224,.4)}
+  .relbox{position:relative}
+  .notes{margin-top:16px;align-self:stretch;border-top:1px dashed var(--g4);padding-top:12px}
+  .note{display:flex;gap:9px;font-size:11.5px;color:var(--g1);margin-bottom:8px;line-height:1.4}
+  .note .n{width:17px;height:17px;border-radius:50%;background:var(--acc-soft);color:var(--acc);font-family:var(--mono);font-size:9.5px;font-weight:700;display:grid;place-items:center;flex:none;margin-top:1px}
+  .note b{color:var(--ink)}
+
+  footer{border-top:1px solid var(--g5);padding:26px 0 60px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--g3)}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <span class="ey">Deliverable · low-fidelity wireframes</span>
+  <h1>Chauffeur super-app — annotated wireframes</h1>
+  <p>Grayscale, structure-only. Blue pins map each region to the UX rationale beneath it. The clickable version lives in the prototype.</p>
+  <span class="lofi">lo-fi · boxes &amp; labels · no visual design</span>
+</div>
+
+<div class="wrap">
+  <div class="sheet">
+
+    <!-- HOME -->
+    <div class="cell">
+      <div class="cap">01 · Home</div><div class="sub">Car-first launchpad</div>
+      <div class="wf relbox">
+        <span class="pin" style="left:-9px;top:64px">1</span>
+        <span class="pin" style="left:-9px;top:150px">2</span>
+        <span class="pin" style="right:-9px;top:250px">3</span>
+        <span class="pin" style="right:-9px;top:320px">4</span>
+        <div class="scr"><div class="sb"><span>9:41</span><span>5G</span></div><div class="bd">
+          <div class="row"><div class="t-lg">Good evening</div><div style="display:flex;gap:5px"><span class="av" style="width:18px;height:18px"></span><span class="av" style="width:18px;height:18px"></span></div></div>
+          <div class="box"><span class="av" style="width:22px;height:22px;border-radius:6px"></span><span class="lab">Nissan Patrol · verified</span><span style="margin-left:auto">▾</span></div>
+          <div class="box">🔍 Where to?</div>
+          <div class="card hi"><div class="t-sm">BOOK A CHAUFFEUR — from AED 45/hr</div><div class="toggle"><div>Pay/min</div><div class="on">Hourly</div></div><div class="btn fill">Choose destination →</div></div>
+          <div class="t-sm" style="margin-top:8px;font-weight:700;color:var(--ink)">Your regulars</div>
+          <div style="display:flex;gap:8px;margin:5px 0"><span class="av"></span><span class="av"></span><span class="av" style="background:var(--g6);border-style:dashed"></span></div>
+          <div class="t-sm" style="font-weight:700;color:var(--ink)">Car errands</div>
+          <div class="grid2"><div class="card"><div class="t-sm">🔧 Garage</div><div class="price">AED 59</div></div><div class="card"><div class="t-sm">🚿 Wash</div><div class="price">fr 35</div></div></div>
+        </div></div>
+      </div>
+      <div class="notes">
+        <div class="note"><span class="n">1</span><span><b>Active-car chip</b> — the car is the anchor object (bring-your-own-car).</span></div>
+        <div class="note"><span class="n">2</span><span><b>One priced primary action</b> replaces two blank illustration cards.</span></div>
+        <div class="note"><span class="n">3</span><span><b>“Your regulars” shelf</b> — one-tap rebook, the retention surface.</span></div>
+        <div class="note"><span class="n">4</span><span><b>Price on every tile</b> (was hidden on all but 2 services).</span></div>
+      </div>
+    </div>
+
+    <!-- MATCH FORK -->
+    <div class="cell">
+      <div class="cap">02 · Match Fork ★</div><div class="sub">The default decision</div>
+      <div class="wf relbox">
+        <span class="pin" style="right:-9px;top:70px">1</span>
+        <span class="pin" style="right:-9px;top:150px">2</span>
+        <span class="pin" style="left:-9px;top:250px">3</span>
+        <div class="scr"><div class="sb"><span>9:41</span><span>5G</span></div><div class="bd">
+          <div class="txt d w40"></div>
+          <div class="t-lg">Who drives your Patrol?</div><div class="t-sm">Tomorrow 7:00 · Home → School</div>
+          <div class="opt sel"><span class="radio on"></span><div style="flex:1"><b style="font-size:11px">Auto-match · fastest</b><div class="t-sm">~9 min · verified on assignment</div><div class="price">AED 49</div></div></div>
+          <div class="opt"><span class="radio"></span><div style="flex:1"><b style="font-size:11px">Choose your chauffeur</b><div class="t-sm">12 available now</div><div style="display:flex;gap:4px;margin-top:4px"><span class="av" style="width:18px;height:18px"></span><span class="av" style="width:18px;height:18px"></span><span class="av" style="width:18px;height:18px"></span></div><div class="price">+AED 5 · waived for regulars</div></div></div>
+          <div class="btn fill">Continue</div>
+        </div></div>
+      </div>
+      <div class="notes">
+        <div class="note"><span class="n">1</span><span><b>Auto-match preselected</b> — the default IS the strategy (protects ETA &amp; supply).</span></div>
+        <div class="note"><span class="n">2</span><span><b>Choice is the priced upgrade</b>, gated by urgency — scheduled/subscription unlocks it.</span></div>
+        <div class="note"><span class="n">3</span><span><b>One decision per screen</b> (Hick’s Law).</span></div>
+      </div>
+    </div>
+
+    <!-- CHOOSE -->
+    <div class="cell">
+      <div class="cap">03 · Choose Chauffeur</div><div class="sub">The JustLife choose-a-pro moment</div>
+      <div class="wf relbox">
+        <span class="pin" style="left:-9px;top:150px">1</span>
+        <span class="pin" style="right:-9px;top:180px">2</span>
+        <span class="pin" style="left:-9px;top:130px">3</span>
+        <div class="scr"><div class="sb"><span>9:41</span><span>5G</span></div><div class="bd">
+          <div class="t-lg">Choose your chauffeur</div>
+          <div class="box" style="border-style:dashed;font-size:9px">🛡 all ID · police · RTA verified</div>
+          <div class="chiprow"><span class="chip on">My regulars</span><span class="chip">Fastest</span><span class="chip">Female</span><span class="chip">Kids</span></div>
+          <div class="card hi"><div class="row"><b style="font-size:11px">Rashid K. ★4.93</b><span class="price">AED 49</span></div><span class="tag">YOUR REGULAR</span><div class="t-sm" style="margin-top:4px">7 trips with you · rebooked by 18 families</div><div style="display:flex;gap:3px;margin-top:4px"><span class="tag">EID✓</span><span class="tag">RTA✓</span></div></div>
+          <div class="card"><div class="row"><b style="font-size:11px">Ahmed S. ★4.93</b><span class="price">+AED 5</span></div><div class="t-sm">great with kids ×11</div></div>
+          <div class="btn fill">Book Rashid</div>
+        </div></div>
+      </div>
+      <div class="notes">
+        <div class="note"><span class="n">1</span><span><b>Named, photographed, rated driver</b> — turns faceless illustrations into trust.</span></div>
+        <div class="note"><span class="n">2</span><span><b>Rebook counts beat stars</b> — behavioral proof discriminates when everyone’s 4.9★.</span></div>
+        <div class="note"><span class="n">3</span><span><b>“Your regular” pinned &amp; isolated</b> (Von Restorff + Serial Position).</span></div>
+      </div>
+    </div>
+
+    <!-- REVIEW & PAY -->
+    <div class="cell">
+      <div class="cap">04 · Review &amp; Pay</div><div class="sub">Trust at the point of payment</div>
+      <div class="wf relbox">
+        <span class="pin" style="left:-9px;top:64px">1</span>
+        <span class="pin" style="right:-9px;top:190px">2</span>
+        <span class="pin" style="left:-9px;top:150px">3</span>
+        <div class="scr"><div class="sb"><span>9:41</span><span>5G</span></div><div class="bd">
+          <div class="t-lg">Review &amp; pay</div>
+          <div class="card hi"><div class="row"><span class="av sq"></span><div style="flex:1"><b style="font-size:11px">Rashid K. ★4.93</b><div class="t-sm">Tomorrow 7:00 · Home → School</div></div></div></div>
+          <div class="box" style="border-style:dashed;font-size:9px">🛡 Patrol covered to AED 50,000</div>
+          <div class="card"><div class="row t-sm"><span>Hourly base</span><span>AED 45</span></div><div class="row t-sm"><span>Choose driver</span><span>AED 5</span></div><div class="row t-sm"><span>VAT 5%</span><span>AED 2.5</span></div><div class="row" style="border-top:1px solid var(--g4);margin-top:4px;padding-top:5px"><b style="font-size:11px">Total</b><b class="price">AED 52.5</b></div></div>
+          <div class="box"><span class="radio on"></span> Apple Pay</div>
+          <div class="btn fill">Confirm · AED 52.5</div>
+        </div></div>
+      </div>
+      <div class="notes">
+        <div class="note"><span class="n">1</span><span><b>Identity block on top</b> — never faceless at the moment of payment.</span></div>
+        <div class="note"><span class="n">2</span><span><b>Itemized AED before pay</b> — no surprise cost (the #1 abandonment driver).</span></div>
+        <div class="note"><span class="n">3</span><span><b>Insurance answered before it’s asked.</b></span></div>
+      </div>
+    </div>
+
+    <!-- LIVE HANDOFF -->
+    <div class="cell">
+      <div class="cap">05 · Live Handoff</div><div class="sub">Key-handover trust</div>
+      <div class="wf relbox">
+        <span class="pin" style="right:-9px;top:210px">1</span>
+        <span class="pin" style="left:-9px;top:290px">2</span>
+        <span class="pin" style="left:-9px;top:340px">3</span>
+        <div class="scr"><div class="sb"><span>9:41</span><span>5G</span></div><div class="bd">
+          <div class="t-lg">Rashid · 6 min away</div><div class="t-sm">arriving on foot to take your keys</div>
+          <div class="ph" style="height:90px;margin:8px 0"></div>
+          <div class="t-sm" style="font-weight:700;color:var(--ink)">Hand over with this PIN</div>
+          <div class="box" style="justify-content:center;font-family:var(--mono);font-size:16px;letter-spacing:8px;color:var(--ink);font-weight:800">4 8 2 1</div>
+          <div class="txt w80"></div><div class="txt s w60"></div>
+          <div class="box" style="font-size:9px">📸 odometer &amp; fuel photo auto-attached</div>
+          <div class="box" style="font-size:9px">🎒 Guardian: live-share this trip</div>
+        </div></div>
+      </div>
+      <div class="notes">
+        <div class="note"><span class="n">1</span><span><b>Handover PIN</b> before keys change hands.</span></div>
+        <div class="note"><span class="n">2</span><span><b>Odometer/fuel photo</b> auto-attached — dispute prevention (upgrades the scooter park-photo).</span></div>
+        <div class="note"><span class="n">3</span><span><b>Guardian mode</b> — live-share the trip with family.</span></div>
+      </div>
+    </div>
+
+    <!-- RATE & REBOOK -->
+    <div class="cell">
+      <div class="cap">06 · Rate &amp; Rebook</div><div class="sub">The retention engine</div>
+      <div class="wf relbox">
+        <span class="pin" style="right:-9px;top:220px">1</span>
+        <span class="pin" style="left:-9px;top:300px">2</span>
+        <div class="scr"><div class="sb"><span>7:58</span><span>5G</span></div><div class="bd" style="text-align:center">
+          <span class="av" style="margin:6px auto;width:44px;height:44px;display:block"></span>
+          <div class="t-lg">How was Rashid?</div><div class="t-sm">Patrol returned · keys with you ✓</div>
+          <div class="stars">★ ★ ★ ★ ★</div>
+          <div style="display:flex;gap:5px;justify-content:center;margin:6px 0"><span class="tag">Tip 10</span><span class="tag">20</span><span class="tag">50</span></div>
+          <div class="btn fill">⭐ Make Rashid your regular</div>
+          <div class="btn ghost">Book again next week</div>
+          <div class="btn ghost">Weekly · save AED 210/mo</div>
+        </div></div>
+      </div>
+      <div class="notes">
+        <div class="note"><span class="n">1</span><span><b>The relationship CTA lands at the trip’s end</b> — the peak trust moment (Peak-End Rule).</span></div>
+        <div class="note"><span class="n">2</span><span><b>The funnel:</b> one-off → favorite → regular → subscription.</span></div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="cell">
+      <div class="cap">07 · Profile / Account</div><div class="sub">Assets-first, not a settings dump</div>
+      <div class="wf relbox">
+        <span class="pin" style="left:-9px;top:110px">1</span>
+        <span class="pin" style="right:-9px;top:190px">2</span>
+        <span class="pin" style="right:-9px;top:250px">3</span>
+        <div class="scr"><div class="sb"><span>9:41</span><span>5G</span></div><div class="bd">
+          <div class="row"><span class="av"></span><div><b style="font-size:11px">Dharmin</b><div class="tag">🟡 Plus</div></div></div>
+          <div class="card hi"><div class="t-sm" style="font-weight:700;color:var(--ink)">Rafeeq Plus + Wallet</div><div class="t-sm">fee waived · AED 240</div></div>
+          <div class="box"><span class="lab">🚗 Garage</span><span style="margin-left:auto;font-size:9px">insurance ⚠ 21d ›</span></div>
+          <div class="box"><span class="lab">🧔 My chauffeurs</span><span style="margin-left:auto">›</span></div>
+          <div class="box"><span class="lab">🔁 Standing bookings</span><span style="margin-left:auto">›</span></div>
+          <div class="box" style="font-size:9px">🛡 Safety · 📄 KYC ✓ · 🌐 EN/عربي</div>
+        </div></div>
+      </div>
+      <div class="notes">
+        <div class="note"><span class="n">1</span><span><b>Assets-first order</b> — membership+wallet → garage → regulars; settings sink to the bottom.</span></div>
+        <div class="note"><span class="n">2</span><span><b>Garage doc alert</b> deep-links straight to a car-errand booking.</span></div>
+        <div class="note"><span class="n">3</span><span><b>Regulars ladder</b> — the north-star engine, surfaced in Profile.</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>Low-fidelity wireframes · 7 screens · annotated · Chauffeur super-app — see prototype.html for the clickable version</footer>
+</body>
+</html>
