@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flow comparison → a layout for the chauffeur app</title>
+<style>
+  :root{
+    --bg:#F5F6F9; --card:#fff; --ink:#12151A; --ink2:#39414E; --muted:#69707E; --faint:#98A0AD;
+    --line:#E1E5EC; --blue:#2456E0; --blue-soft:#E9EFFF; --teal:#0E9C9C; --indigo:#5B62E8;
+    --slate:#5A6478; --slate-soft:#EEF0F3; --orange:#FF6A00; --orange-soft:#FFF1E7; --good:#1EA34B;
+    --green:#12A150; --lime:#8BC34A; --purple:#7C3AED; --pink:#DB2777;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.02em;line-height:1.12}
+  .ey{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--blue);display:inline-flex;align-items:center;gap:9px}
+  .ey::before{content:"";width:20px;height:1.5px;background:currentColor}
+  .head{text-align:center;padding:40px 24px 8px}
+  .head h1{font-size:29px;margin:12px 0 8px;letter-spacing:-.03em}
+  .head p{margin:0 auto;color:var(--muted);font-size:14.5px;max-width:62ch}
+
+  .caveat{max-width:1000px;margin:20px auto 0;background:var(--orange-soft);border:1px solid #F6D5BC;border-radius:12px;padding:12px 16px;font-size:12.5px;color:#8a4a17}
+  .caveat b{color:#6b3810}
+
+  section{padding:40px 0}
+  .shead{margin-bottom:22px}
+  .shead h2{font-size:23px;margin-top:11px}
+  .shead p{margin-top:10px;color:var(--muted);font-size:14px;max-width:640px}
+
+  .app{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:14px}
+  .app .top{display:flex;align-items:center;gap:11px;margin-bottom:14px;flex-wrap:wrap}
+  .app .ic{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-size:18px;color:#fff;flex:none}
+  .app .nm{font-size:16px;font-weight:800}
+  .app .cat{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.03em}
+  .app .borrow{margin-left:auto;font-family:var(--mono);font-size:10.5px;font-weight:700;background:var(--blue-soft);color:var(--blue);border-radius:7px;padding:5px 10px}
+
+  .steps{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:6px}
+  .step{flex:none;min-width:96px;max-width:130px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:11px;color:var(--ink2);position:relative}
+  .step .n{font-family:var(--mono);font-size:9px;color:var(--faint);display:block;margin-bottom:3px}
+  .step b{color:var(--ink);font-size:11.5px;display:block;margin-bottom:2px}
+  .step.hot{border-color:var(--orange);background:var(--orange-soft)}
+  .step.hot b{color:var(--orange)}
+  .arrow{flex:none;align-self:center;color:var(--faint);font-family:var(--mono);padding:0 5px}
+
+  .families{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.families{grid-template-columns:1fr}}
+  .fam{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;border-top:4px solid var(--c)}
+  .fam h3{font-size:16px}.fam .who{font-family:var(--mono);font-size:10.5px;color:var(--c);margin:5px 0 10px;font-weight:700}
+  .fam ul{margin:0;padding-left:16px}.fam li{font-size:13px;color:var(--ink2);margin-bottom:6px}
+  .fam li b{color:var(--ink)}
+
+  /* synthesized */
+  .synth{background:var(--ink);color:#EAEDF3;border-radius:18px;padding:26px}
+  .synth .ey{color:#8AA6FF}
+  .synth h2{color:#fff;font-size:23px;margin:11px 0 6px}
+  .synth p{color:#AEB6C6;font-size:14px;margin:0 0 20px;max-width:640px}
+  .synthflow{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:8px}
+  .sstep{flex:none;min-width:120px;max-width:150px;border:1px solid #2A303C;background:#181C24;border-radius:11px;padding:12px;font-size:11.5px;color:#C7CEDA}
+  .sstep .n{font-family:var(--mono);font-size:9px;color:#7A8393;display:block;margin-bottom:4px}
+  .sstep b{color:#fff;display:block;font-size:12.5px;margin-bottom:4px}
+  .sstep .src{font-family:var(--mono);font-size:9px;color:#8AA6FF;margin-top:6px;display:block}
+  .sstep.hot{border-color:var(--orange);background:#2a1c10}
+  .sstep.hot b{color:var(--orange)}
+  .sarrow{flex:none;align-self:center;color:#4A5162;padding:0 6px}
+
+  footer{border-top:1px solid var(--line);margin-top:20px;padding:30px 0 60px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--faint)}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <span class="ey">Competitive flow teardown</span>
+  <h1>How 5 apps structure their core flow →<br>a layout for the chauffeur app</h1>
+  <p>JustLife · Urban Company · Lime · Dott · Smiles — their booking/ride flows compared, then synthesized into one layout for a bring-your-own-car chauffeur super-app.</p>
+</div>
+
+<div class="caveat wrap">
+  ⚠️ <b>Source note:</b> flows below are reconstructed from design knowledge of each app, <b>not</b> live Mobbin captures — the <span class="mono">mobbin-mcp</span> server is archived and needs your Mobbin login + a session restart before I can pull the real screens. Wire it up (see the offer) and I'll swap these for exact Mobbin references.
+</div>
+
+<div class="wrap">
+
+  <!-- APP FLOWS -->
+  <section>
+    <div class="shead"><span class="ey">The flows</span><h2>Two flow families, one super-app pattern</h2>
+      <p>Home-service apps let you <b>configure + choose a pro</b>; scooter apps optimize for <b>map-first immediacy</b>; Smiles shows the <b>super-app + rewards</b> shell.</p></div>
+
+    <!-- JustLife -->
+    <div class="app">
+      <div class="top"><span class="ic" style="background:#0EA5E9">🧽</span><div><div class="nm">JustLife</div><div class="cat">UAE home services · choose-a-pro</div></div><span class="borrow">borrow: choose pro + recurring</span></div>
+      <div class="steps">
+        <div class="step"><span class="n">01</span><b>Home tiles</b>cleaning · salon · handyman</div><span class="arrow">→</span>
+        <div class="step"><span class="n">02</span><b>Configure</b>frequency · hours · extras</div><span class="arrow">→</span>
+        <div class="step"><span class="n">03</span><b>Date &amp; time</b>slot picker</div><span class="arrow">→</span>
+        <div class="step hot"><span class="n">04</span><b>Choose pro</b>photo · rating · same-pro</div><span class="arrow">→</span>
+        <div class="step"><span class="n">05</span><b>Address</b>saved places</div><span class="arrow">→</span>
+        <div class="step"><span class="n">06</span><b>Pay</b>wallet · card</div><span class="arrow">→</span>
+        <div class="step"><span class="n">07</span><b>Rate &amp; rebook</b>weekly same pro</div>
+      </div>
+    </div>
+
+    <!-- Urban Company -->
+    <div class="app">
+      <div class="top"><span class="ic" style="background:#E11D48">🛠</span><div><div class="nm">Urban Company</div><div class="cat">home services · package pricing</div></div><span class="borrow">borrow: package price + ratings</span></div>
+      <div class="steps">
+        <div class="step"><span class="n">01</span><b>Categories</b>browse verticals</div><span class="arrow">→</span>
+        <div class="step hot"><span class="n">02</span><b>Package</b>upfront &lsquo;from&rsquo; price</div><span class="arrow">→</span>
+        <div class="step"><span class="n">03</span><b>Slot</b>date &amp; time</div><span class="arrow">→</span>
+        <div class="step"><span class="n">04</span><b>Address</b>+ details</div><span class="arrow">→</span>
+        <div class="step"><span class="n">05</span><b>Checkout</b>wallet · plans</div><span class="arrow">→</span>
+        <div class="step"><span class="n">06</span><b>Pro assigned</b>rated · track</div><span class="arrow">→</span>
+        <div class="step"><span class="n">07</span><b>Rate</b>reviews</div>
+      </div>
+    </div>
+
+    <!-- Lime -->
+    <div class="app">
+      <div class="top"><span class="ic" style="background:#65A30D">🛴</span><div><div class="nm">Lime</div><div class="cat">scooters · map-first, on-demand</div></div><span class="borrow">borrow: map-first, minimal taps</span></div>
+      <div class="steps">
+        <div class="step hot"><span class="n">01</span><b>Map</b>vehicles + charge %</div><span class="arrow">→</span>
+        <div class="step"><span class="n">02</span><b>Tap / scan QR</b>unlock</div><span class="arrow">→</span>
+        <div class="step"><span class="n">03</span><b>Ride</b>live rate</div><span class="arrow">→</span>
+        <div class="step hot"><span class="n">04</span><b>End + park photo</b>proof of parking</div><span class="arrow">→</span>
+        <div class="step"><span class="n">05</span><b>Auto-pay</b>+ receipt</div>
+      </div>
+    </div>
+
+    <!-- Dott -->
+    <div class="app">
+      <div class="top"><span class="ic" style="background:#111827">🛵</span><div><div class="nm">Dott</div><div class="cat">scooters · reserve + passes</div></div><span class="borrow">borrow: reserve-ahead + passes</span></div>
+      <div class="steps">
+        <div class="step"><span class="n">01</span><b>Map</b>nearby vehicles</div><span class="arrow">→</span>
+        <div class="step hot"><span class="n">02</span><b>Reserve</b>hold for 10 min</div><span class="arrow">→</span>
+        <div class="step"><span class="n">03</span><b>Scan</b>unlock</div><span class="arrow">→</span>
+        <div class="step"><span class="n">04</span><b>Ride</b>+ pass discount</div><span class="arrow">→</span>
+        <div class="step"><span class="n">05</span><b>End + park photo</b>zone check</div><span class="arrow">→</span>
+        <div class="step hot"><span class="n">06</span><b>Passes</b>day/week bundles</div>
+      </div>
+    </div>
+
+    <!-- Smiles -->
+    <div class="app">
+      <div class="top"><span class="ic" style="background:#7C3AED">😃</span><div><div class="nm">Smiles</div><div class="cat">UAE super-app · rewards</div></div><span class="borrow">borrow: super-app home + rewards</span></div>
+      <div class="steps">
+        <div class="step hot"><span class="n">01</span><b>Home grid</b>food · mart · rewards</div><span class="arrow">→</span>
+        <div class="step"><span class="n">02</span><b>Pick vertical</b>switch service</div><span class="arrow">→</span>
+        <div class="step"><span class="n">03</span><b>Browse</b>merchants / offers</div><span class="arrow">→</span>
+        <div class="step"><span class="n">04</span><b>Cart</b>items</div><span class="arrow">→</span>
+        <div class="step hot"><span class="n">05</span><b>Checkout</b>redeem Smiles points</div><span class="arrow">→</span>
+        <div class="step"><span class="n">06</span><b>Confirm</b>+ earn points</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PATTERN EXTRACTION -->
+  <section>
+    <div class="shead"><span class="ey">What to take from each</span><h2>Pattern extraction</h2></div>
+    <div class="families">
+      <div class="fam" style="--c:var(--blue)">
+        <h3>Scheduled &amp; choose-a-pro</h3>
+        <div class="who">JustLife · Urban Company</div>
+        <ul>
+          <li><b>Configure → slot → choose pro</b> is the proven scheduled path — maps 1:1 to chauffeur.</li>
+          <li><b>Upfront &lsquo;from AED&rsquo; package price</b> before any commitment.</li>
+          <li><b>Same-pro recurring</b> is the retention engine — rebook the person you liked.</li>
+        </ul>
+      </div>
+      <div class="fam" style="--c:var(--lime)">
+        <h3>Map-first, on-demand</h3>
+        <div class="who">Lime · Dott</div>
+        <ul>
+          <li><b>Map is the home</b> — see supply + ETA instantly; near-zero taps to start.</li>
+          <li><b>Reserve-ahead</b> (Dott) holds a vehicle — the analog of holding a chauffeur slot.</li>
+          <li><b>End with a park photo</b> — proof-of-state at handoff (→ our odometer/fuel photo + PIN).</li>
+        </ul>
+      </div>
+      <div class="fam" style="--c:var(--purple)">
+        <h3>Super-app shell</h3>
+        <div class="who">Smiles</div>
+        <ul>
+          <li><b>Service grid home</b> with easy vertical switching.</li>
+          <li><b>Wallet + points redeemed at checkout</b> — our Rafeeq Plus / AED wallet.</li>
+          <li><b>Earn on every action</b> — loyalty loop that pulls the next booking.</li>
+        </ul>
+      </div>
+      <div class="fam" style="--c:var(--orange)">
+        <h3>The chauffeur twist</h3>
+        <div class="who">unique to us</div>
+        <ul>
+          <li><b>Bring-your-own-car</b> — car-first home (like the scooter map, but the car is the object).</li>
+          <li><b>Choose-your-chauffeur</b> gated by urgency (on-demand = auto-match; scheduled = choose).</li>
+          <li><b>Key-handover trust</b> — PIN + insurance where scooters only need a park photo.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SYNTHESIZED LAYOUT -->
+  <section>
+    <div class="synth">
+      <span class="ey">The layout</span>
+      <h2>The chauffeur booking flow — best of all five</h2>
+      <p>Car-first home (scooter immediacy) → configure + slot + choose-your-chauffeur (home-service pattern) → PIN handoff (scooter park-photo, upgraded) → rate &amp; rebook + rewards (recurring + Smiles loop).</p>
+      <div class="synthflow">
+        <div class="sstep hot"><span class="n">01</span><b>Car-first home</b>your car + service grid + regulars<span class="src">Lime map · Smiles grid</span></div><span class="sarrow">→</span>
+        <div class="sstep"><span class="n">02</span><b>Pick service</b>priced tile · from AED<span class="src">Urban Company</span></div><span class="sarrow">→</span>
+        <div class="sstep"><span class="n">03</span><b>When &amp; where</b>now / schedule · route<span class="src">JustLife slot</span></div><span class="sarrow">→</span>
+        <div class="sstep hot"><span class="n">04</span><b>Match fork</b>auto-match · or choose<span class="src">our gate + Uber Reserve</span></div><span class="sarrow">→</span>
+        <div class="sstep hot"><span class="n">05</span><b>Choose chauffeur</b>photo · rating · your regular<span class="src">JustLife choose-a-pro</span></div><span class="sarrow">→</span>
+        <div class="sstep"><span class="n">06</span><b>Review &amp; pay</b>itemized AED · wallet · insurance<span class="src">UC checkout · Smiles wallet</span></div><span class="sarrow">→</span>
+        <div class="sstep hot"><span class="n">07</span><b>Live handoff</b>PIN + odometer/fuel photo<span class="src">Lime/Dott park-photo, upgraded</span></div><span class="sarrow">→</span>
+        <div class="sstep"><span class="n">08</span><b>Rate &amp; rebook</b>make him your regular · earn<span class="src">JustLife recurring · Smiles points</span></div>
+      </div>
+    </div>
+    <p style="text-align:center;color:var(--muted);font-size:13px;margin-top:18px">This matches the clickable prototype already built — <a href="prototype.html" style="color:var(--blue);font-weight:700">open it →</a></p>
+  </section>
+
+</div>
+
+<footer>Flow comparison · JustLife · Urban Company · Lime · Dott · Smiles → chauffeur super-app layout · reconstructed from design knowledge (validate via Mobbin)</footer>
+</body>
+</html>
